@@ -3,6 +3,9 @@ name: claude-animation-styles
 description: Make animated story videos in 10 styles that do big numbers on Reels and TikTok: pixel art, PS2 style, comic art, lego style, claymation, paper cutout, retro anime, low poly 3D, risograph and miniature diorama. Claude writes the story, codes every scene, and renders an mp4 on the user's own computer, with no credits or image models. Use one style for a whole video or switch style every beat. Use when asked for an animated video, a story video, a video in any of these styles, "make it look like claymation / paper / pixel art", an animated ad for an app or SaaS, or when someone wants story copy for a video.
 ---
 
+> Kit by [@ernestosoftware](https://x.com/ernestosoftware) on X.
+
+
 # Claude animation styles
 
 Ten looks, each one a file of real code that Claude can point at any story. Nothing here calls an image or video model, so the same story renders the same way every time and costs nothing.
