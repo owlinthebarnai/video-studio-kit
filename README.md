@@ -74,6 +74,32 @@ Writing a script is one short Claude Code call. Building a video runs Claude Cod
 | `overlays/` | our additions to those sources, applied by setup |
 | `outputs/` | your finished videos (not in git) |
 
+## Credits
+
+This kit stands on the work of these open-source projects. Thank you to their authors.
+
+- [JohnHeibel/ClaudeAnimationBase](https://github.com/JohnHeibel/ClaudeAnimationBase): the painted watercolour engine (same as painted-animation)
+- [Leonxlnx/earshot](https://github.com/Leonxlnx/earshot): earshot and real-sound: judging and building sound
+- [LottieFiles/motion-design-skill](https://github.com/LottieFiles/motion-design-skill): motion-design principles
+- [morgsdoti/story-video-studio](https://github.com/morgsdoti/story-video-studio): story-video-studio: stickman survival story prompt
+- [Vladic20/tvhead-studio](https://github.com/Vladic20/tvhead-studio): tvhead-video (15 story looks incl. stickman), motion-studio (anime, motion reel), blender-3d, ai-montage
+- [ahujasid/mcp-for-blender](https://github.com/ahujasid/mcp-for-blender): Blender MCP (Claude controls an open Blender)
+- [angrypenguinpng/blender-claymation-skill](https://github.com/angrypenguinpng/blender-claymation-skill): blender-claymation: Cycles clay stop-motion
+- [cth9191/animate](https://github.com/cth9191/animate): animate: one-canvas procedural pieces with a synth score
+- [greensock/gsap-skills](https://github.com/greensock/gsap-skills): GSAP animation skills
+- [heygen-com/hyperframes](https://github.com/heygen-com/hyperframes): HyperFrames: HTML + GSAP to video, registry of blocks, media tools
+- [kelano86/what-if-animation](https://github.com/kelano86/what-if-animation): what-if-animation stick-figure episodes
+- [lemomo-ai/lemo-opuscar](https://github.com/lemomo-ai/lemo-opuscar): lemo-opuscar: 66 short-film styles
+- [mromidev/claude-animated-shorts](https://github.com/mromidev/claude-animated-shorts): cartoon-3d-short: 2D cartoon cards in a 3D world
+- [openai/whisper](https://github.com/openai/whisper): Whisper: word timings for captions
+- [remotion-dev/skills](https://github.com/remotion-dev/skills): the Remotion skills (React video)
+- [showheyohtaki/motion-prompt](https://github.com/showheyohtaki/motion-prompt): motion-prompt: library of 120 motion moves
+- [tuzhechen2005/opus-video-skills](https://github.com/tuzhechen2005/opus-video-skills): kinetic-reel and painted-animation
+- [zhuyansen/awesome-claude-video-skills](https://github.com/zhuyansen/awesome-claude-video-skills): index of Claude video skills (where many of these were found)
+- **claude-animation-styles** kit: the ten Claude animation styles (included by the repo owner)
+
+Built on: [Claude Code](https://claude.com/claude-code), [Remotion](https://www.remotion.dev), [three.js](https://threejs.org), [GSAP](https://gsap.com), [Playwright](https://playwright.dev), [FFmpeg](https://ffmpeg.org), [Blender](https://www.blender.org), the [Kokoro](https://huggingface.co/hexgrad/Kokoro-82M) voice via [kokoro-onnx](https://github.com/thewh1teagle/kokoro-onnx), and [Kenney](https://kenney.nl) CC0 3D models.
+
 ## Licences
 
 Third-party code keeps its own licence; see [THIRD_PARTY.md](THIRD_PARTY.md). Remotion's skills are downloaded from their repo at setup and not redistributed here.
