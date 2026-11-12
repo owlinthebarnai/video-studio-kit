@@ -1,0 +1,19 @@
+{
+ "v": 2,
+ "text": "One cold night, he rubbed two sticks together...",
+ "voice": "bf322df2096a46f18c579d0baa36f41d",
+ "model": "fish-audio/s2.1-pro-free:free",
+ "fileDur": 2.816,
+ "speech": [
+  [
+   0,
+   1.026
+  ],
+  [
+   1.321,
+   2.673
+  ]
+ ],
+ "stt": null,
+ "sttTried": false
+}

@@ -1,0 +1,15 @@
+{
+ "v": 2,
+ "text": "and then: fire!",
+ "voice": "bf322df2096a46f18c579d0baa36f41d",
+ "model": "fish-audio/s2.1-pro-free:free",
+ "fileDur": 1.259,
+ "speech": [
+  [
+   0.115,
+   1.063
+  ]
+ ],
+ "stt": null,
+ "sttTried": false
+}

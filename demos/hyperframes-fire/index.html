@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The discovery of fire - HyperFrames</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      html, body { margin: 0; padding: 0; width: 1080px; height: 1920px; overflow: hidden; background: #0d0b1a; font-family: "Outfit", "Inter", sans-serif; }
+      #fire-root { position: relative; width: 1080px; height: 1920px; overflow: hidden; }
+      .sky { position: absolute; inset: 0; background: linear-gradient(#0d0b1a 0%, #1b1640 55%, #2a1c3c 100%); }
+      .warm { position: absolute; inset: 0; background: radial-gradient(circle at 50% 74%, #ff9a3c 0%, #c44a2a 28%, rgba(60,20,30,0) 62%); opacity: 0; }
+      .ground { position: absolute; left: 0; right: 0; bottom: 0; height: 560px; background: #15111f; }
+      .eyebrow { position: absolute; top: 230px; left: 90px; font-size: 40px; letter-spacing: 12px; color: #f5e6c8; opacity: 0; font-weight: 600; }
+      .headline { position: absolute; top: 290px; left: 80px; font-size: 300px; line-height: 0.9; font-weight: 800; color: #f5e6c8; letter-spacing: -8px; }
+      .headline span { display: inline-block; opacity: 0; transform: translateY(80px); }
+      .headline .dot { color: #ff7a2a; }
+      .sub { position: absolute; top: 620px; left: 90px; font-size: 44px; color: #f5e6c8; opacity: 0; }
+      svg { position: absolute; left: 0; top: 0; }
+      .star { fill: #f5e6c8; }
+    </style>
+  </head>
+  <body>
+    <div id="fire-root" data-composition-id="fire" data-width="1080" data-height="1920" data-start="0" data-duration="5">
+      <div class="sky"></div>
+      <div class="warm" id="warm"></div>
+      <svg width="1080" height="1920" viewBox="0 0 1080 1920">
+        <g id="stars">
+          <circle class="star" cx="140" cy="900" r="4" /><circle class="star" cx="330" cy="820" r="3" /><circle class="star" cx="820" cy="760" r="5" />
+          <circle class="star" cx="960" cy="980" r="3" /><circle class="star" cx="600" cy="880" r="3" /><circle class="star" cx="460" cy="1000" r="4" />
+          <circle cx="860" cy="560" r="70" fill="#f5e6c8" opacity="0.9" />
+        </g>
+      </svg>
+      <div class="ground"></div>
+      <svg width="1080" height="1920" viewBox="0 0 1080 1920">
+        <!-- the caveman, a flat silhouette crouched to the left of the fire -->
+        <g transform="translate(300 1440)"><g id="man">
+          <g id="manBody">
+            <path d="M -70 0 Q -90 -140 -20 -200 L 70 -190 Q 110 -110 80 0 Z" fill="#c07a3e" />
+            <circle cx="-40" cy="-130" r="14" fill="#7a4a22" /><circle cx="30" cy="-80" r="12" fill="#7a4a22" />
+            <circle cx="10" cy="-262" r="64" fill="#e3a679" />
+            <path d="M -60 -280 Q -40 -360 40 -340 Q 90 -320 70 -270 Q 20 -300 -60 -270 Z" fill="#2e1a10" />
+            <path d="M -30 -240 Q 10 -170 70 -235 Q 40 -205 -30 -240 Z" fill="#2e1a10" />
+            <circle cx="42" cy="-268" r="7" fill="#14110f" />
+          </g>
+          <g id="armL"><rect x="40" y="-190" width="160" height="36" rx="18" fill="#e3a679" /></g>
+          <g id="armR"><rect x="30" y="-150" width="170" height="36" rx="18" fill="#c98a5c" /></g>
+          <rect x="-70" y="-10" width="60" height="40" rx="18" fill="#c98a5c" />
+          <rect x="20" y="-10" width="60" height="40" rx="18" fill="#e3a679" />
+        </g></g>
+        <!-- the fire drill -->
+        <g id="drill"><rect x="470" y="1420" width="220" height="26" rx="8" fill="#a4703f" /><rect id="stick" x="574" y="1220" width="14" height="210" rx="7" fill="#8d5b33" /></g>
+        <!-- smoke -->
+        <g id="smoke" opacity="0">
+          <circle class="puff" cx="590" cy="1380" r="20" fill="#cfc8d6" /><circle class="puff" cx="610" cy="1300" r="28" fill="#cfc8d6" /><circle class="puff" cx="585" cy="1210" r="36" fill="#cfc8d6" />
+        </g>
+        <!-- spark burst -->
+        <g id="spark" transform="translate(580 1420) scale(0)">
+          <path d="M 0 -140 L 22 -22 L 140 0 L 22 22 L 0 140 L -22 22 L -140 0 L -22 -22 Z" fill="#fff3c0" />
+        </g>
+        <!-- the fire: logs, stones and flame layers that scale up from the base -->
+        <g id="logs"><rect x="460" y="1400" width="250" height="34" rx="17" fill="#6e4824" transform="rotate(-14 585 1417)" /><rect x="460" y="1400" width="250" height="34" rx="17" fill="#8d5b33" transform="rotate(14 585 1417)" /></g>
+        <g id="flames" transform="translate(585 1430) scale(1 0)">
+          <path id="f1" d="M -150 0 Q -170 -220 -60 -380 Q -40 -250 0 -230 Q 30 -470 120 -560 Q 130 -360 170 -260 Q 190 -120 150 0 Z" fill="#e8542a" />
+          <path id="f2" d="M -100 0 Q -110 -170 -30 -290 Q 0 -200 30 -190 Q 50 -340 110 -400 Q 120 -250 120 0 Z" fill="#f28a2e" />
+          <path id="f3" d="M -55 0 Q -60 -110 0 -200 Q 60 -110 55 0 Z" fill="#ffd25a" />
+        </g>
+        <g id="stones"><ellipse cx="440" cy="1450" rx="40" ry="24" fill="#6a6478" /><ellipse cx="520" cy="1468" rx="40" ry="24" fill="#7a7488" /><ellipse cx="610" cy="1472" rx="40" ry="24" fill="#6a6478" /><ellipse cx="700" cy="1462" rx="40" ry="24" fill="#7a7488" /><ellipse cx="760" cy="1440" rx="36" ry="22" fill="#6a6478" /></g>
+      </svg>
+      <div class="eyebrow" id="eyebrow">100,000 BC</div>
+      <div class="headline" id="headline"><span>F</span><span>I</span><span>R</span><span>E</span><span class="dot">.</span></div>
+      <div class="sub" id="sub">The first technology.</div>
+      <script>
+        (function () {
+          const tl = gsap.timeline({ paused: true });
+          const SPARK = 2.2;
+          tl.to('#eyebrow', { opacity: 1, duration: 0.5, ease: 'power2.out' }, 0.2);
+          // rubbing: arms and stick shake on the beat, until the spark
+          tl.to('#armL', { y: -16, duration: 0.09, repeat: 21, yoyo: true, ease: 'sine.inOut' }, 0.1);
+          tl.to('#armR', { y: 16, duration: 0.09, repeat: 21, yoyo: true, ease: 'sine.inOut' }, 0.1);
+          tl.to('#stick', { x: 6, duration: 0.09, repeat: 21, yoyo: true, ease: 'sine.inOut' }, 0.1);
+          tl.to('#manBody', { rotation: 8, svgOrigin: '0 0', duration: 0.4, ease: 'power2.out' }, 0);
+          tl.to('#smoke', { opacity: 1, duration: 0.6 }, 0.9);
+          tl.fromTo('.puff', { y: 0, scale: 0.6 }, { y: -160, scale: 1.4, duration: 1.4, stagger: 0.15, ease: 'none', transformOrigin: '50% 50%' }, 0.9);
+          // the spark
+          tl.to('#spark', { scale: 1.2, rotation: 45, duration: 0.18, ease: 'back.out(3)', transformOrigin: '50% 50%' }, SPARK);
+          tl.to('#spark', { scale: 0, duration: 0.3, ease: 'power2.in' }, SPARK + 0.25);
+          tl.to('#smoke', { opacity: 0, duration: 0.3 }, SPARK + 0.1);
+          tl.set('#drill', { opacity: 0 }, SPARK + 0.1);
+          // the fire takes
+          tl.to('#flames', { scaleY: 1, duration: 0.7, ease: 'back.out(1.6)', transformOrigin: '50% 100%' }, SPARK + 0.1);
+          tl.to('#f1', { scaleX: 1.06, scaleY: 0.95, duration: 0.12, repeat: 15, yoyo: true, transformOrigin: '50% 100%' }, SPARK + 0.8);
+          tl.to('#f2', { scaleX: 0.94, scaleY: 1.06, duration: 0.1, repeat: 18, yoyo: true, transformOrigin: '50% 100%' }, SPARK + 0.8);
+          tl.to('#warm', { opacity: 1, duration: 0.8, ease: 'power2.out' }, SPARK + 0.1);
+          tl.to('#stars', { opacity: 0.35, duration: 0.8 }, SPARK + 0.1);
+          // he jumps up and throws his arms up
+          tl.to('#manBody', { rotation: 0, duration: 0.3, ease: 'back.out(2)' }, SPARK + 0.6);
+          tl.to('#armL', { rotation: -120, svgOrigin: '50 -172', duration: 0.3, ease: 'back.out(2)' }, SPARK + 0.6);
+          tl.to('#armR', { rotation: -60, svgOrigin: '40 -132', duration: 0.3, ease: 'back.out(2)' }, SPARK + 0.6);
+          tl.to('#man', { y: -60, duration: 0.18, repeat: 5, yoyo: true, ease: 'power2.out' }, SPARK + 0.7);
+          // headline
+          tl.to('#headline span', { opacity: 1, y: 0, duration: 0.45, stagger: 0.07, ease: 'back.out(2)' }, SPARK + 0.25);
+          tl.to('#sub', { opacity: 1, duration: 0.5 }, SPARK + 1.0);
+          window.__timelines = window.__timelines || {};
+          window.__timelines['fire'] = tl;
+        })();
+      </script>
+    </div>
+  </body>
+</html>

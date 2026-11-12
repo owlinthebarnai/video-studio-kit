@@ -1,0 +1,100 @@
+{
+  "title": {
+    "en": "Discovery of fire (doodle)"
+  },
+  "look": "doodle",
+  "format": "9:16",
+  "languages": [
+    "en"
+  ],
+  "captions": true,
+  "transition": "cut",
+  "flips": false,
+  "outro": 0.3,
+  "characters": {
+    "og": {
+      "name": {
+        "en": "Og"
+      },
+      "desc": {
+        "en": "a caveman"
+      },
+      "kind": "stick",
+      "body": "hide",
+      "hat": "hair",
+      "color": "#a8743e"
+    }
+  },
+  "scenes": [
+    {
+      "stage": "setup",
+      "note": {
+        "en": "Night: Og crouches and rubs two sticks"
+      },
+      "say": {
+        "en": "One cold night, two sticks..."
+      },
+      "cast": [
+        {
+          "id": "og",
+          "x": 560,
+          "face": "worried",
+          "pose": "reach",
+          "enter": "none"
+        }
+      ],
+      "cam": "still",
+      "transition": "cut",
+      "set": {
+        "type": "forest"
+      },
+      "dark": true
+    },
+    {
+      "stage": "payoff",
+      "keep": true,
+      "note": {
+        "en": "The fire bursts up, Og cheers"
+      },
+      "say": {
+        "en": "And then... fire!"
+      },
+      "props": [
+        {
+          "type": "campfire",
+          "id": "fire",
+          "x": 800,
+          "scale": 1.6,
+          "on": {
+            "en": "And"
+          },
+          "enter": "grow",
+          "y": 615
+        },
+        {
+          "type": "exclaim",
+          "id": "ex",
+          "x": 560,
+          "y": 220,
+          "size": 90,
+          "on": {
+            "en": "And"
+          }
+        }
+      ],
+      "change": [
+        {
+          "id": "og",
+          "on": {
+            "en": "And"
+          },
+          "face": "joy",
+          "pose": "cheer"
+        }
+      ],
+      "cam": "still",
+      "transition": "none",
+      "hold": 1.6
+    }
+  ]
+}

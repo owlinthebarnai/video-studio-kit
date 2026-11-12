@@ -1,0 +1,780 @@
+{
+  "subject": "The discovery of fire (5-second example, same story in every tool)",
+  "groups": [
+    {
+      "id": "makers",
+      "label": "Video makers"
+    },
+    {
+      "id": "demo-only",
+      "label": "Video makers (built-in demo shown)"
+    }
+  ],
+  "tools": [
+    {
+      "id": "tvhead",
+      "group": "makers",
+      "name": "tvhead-video",
+      "repo": "repos/Vladic20_tvhead-studio",
+      "skill": "tvhead-video",
+      "status": "verified",
+      "example": "fire",
+      "what": "Narrated story explainers from a story.json: 15 looks incl. 5 stickman styles. Voice: Kokoro (free, local) patched in.",
+      "speed": "about real time (a 60 s video renders in 1-3 min)",
+      "needs": "nothing (Kokoro voice installed in studio/tts)",
+      "styles": [
+        {
+          "id": "prehistoric",
+          "name": "Stickman prehistoric",
+          "example": "examples/tvhead--prehistoric.mp4"
+        },
+        {
+          "id": "stick",
+          "name": "Classic stickman",
+          "example": "examples/tvhead--stick.mp4"
+        },
+        {
+          "id": "cozy",
+          "name": "Cozy stickman",
+          "example": "examples/tvhead--cozy.mp4"
+        },
+        {
+          "id": "doodle",
+          "name": "Doodle (TV heads)",
+          "example": "examples/tvhead--doodle.mp4"
+        },
+        {
+          "id": "pixel",
+          "name": "8-bit pixel",
+          "example": "examples/tvhead--pixel.mp4"
+        },
+        {
+          "id": "comic",
+          "name": "Comic book",
+          "example": "examples/tvhead--comic.mp4"
+        },
+        {
+          "id": "beanie",
+          "name": "Stickman Zeke (beanie)",
+          "example": "examples/tvhead--beanie.mp4"
+        },
+        {
+          "id": "history",
+          "name": "Stickman historical",
+          "example": "examples/tvhead--history.mp4"
+        },
+        {
+          "id": "cartoon",
+          "name": "Warm garage cartoon",
+          "example": "examples/tvhead--cartoon.mp4"
+        },
+        {
+          "id": "noir",
+          "name": "Neon noir",
+          "example": "examples/tvhead--noir.mp4"
+        },
+        {
+          "id": "dota",
+          "name": "Dark fantasy",
+          "example": "examples/tvhead--dota.mp4"
+        },
+        {
+          "id": "blocks",
+          "name": "Brick game",
+          "example": "examples/tvhead--blocks.mp4"
+        },
+        {
+          "id": "desk3d",
+          "name": "3D desk UI",
+          "example": "examples/tvhead--desk3d.mp4"
+        },
+        {
+          "id": "underground",
+          "name": "Underground cutaway",
+          "example": "examples/tvhead--underground.mp4"
+        },
+        {
+          "id": "marker",
+          "name": "Marker drawing",
+          "example": "examples/tvhead--marker.mp4"
+        }
+      ],
+      "build": "studio/episodes/<slug>/story.json (see .claude/skills/tvhead-video/references/story-api.md); node make.mjs <slug> --stills auto; node make.mjs <slug>. Smoothness: transition cut, cam still, enter none. Fire examples: studio/episodes/fire-*."
+    },
+    {
+      "id": "animate",
+      "group": "makers",
+      "name": "animate (Chase AI)",
+      "repo": "repos/cth9191_animate",
+      "skill": "animate",
+      "status": "verified",
+      "example": "fire",
+      "what": "One-canvas procedural animation with a synthesized score. Styles: cut paper, crosshatch, riso, sketchbook, math, pixel, isometric.",
+      "speed": "a 5 s piece builds in seconds, exports in ~1-2 min",
+      "needs": "Playwright Chromium (installed)",
+      "styles": [
+        {
+          "id": "cut-paper",
+          "name": "Cut paper",
+          "example": "examples/animate--cut-paper.mp4"
+        }
+      ],
+      "build": "demos/animate/pieces/<name>: piece.json + src/{head.html,scenes.js,bridges.js,score.js}; node .claude/skills/animate/tools/build.mjs <piece>; tools/still.mjs; tools/export.mjs <piece> --share."
+    },
+    {
+      "id": "painted",
+      "group": "makers",
+      "name": "painted-animation (+ ClaudeAnimationBase)",
+      "repo": "repos/tuzhechen2005_opus-video-skills · repos/JohnHeibel_ClaudeAnimationBase",
+      "skill": "painted-animation",
+      "status": "verified",
+      "example": "fire",
+      "what": "Hand-painted watercolour and boiling ink (p5.js + p5.brush), 16:9. Both repos are the same engine.",
+      "speed": "1-4 s per frame on this GPU (5 s = ~5 min)",
+      "needs": "nothing",
+      "styles": [
+        {
+          "id": "watercolour",
+          "name": "Watercolour & ink",
+          "example": "examples/painted-animation--watercolour.mp4"
+        }
+      ],
+      "build": "demos/painted: src/scenes/<scene>.js hooked in studio.html, src/config.js duration; node render.mjs --sheet=...; node render.mjs --clip --out=out/x.mp4. (Setup script needs rsync: copy the template by hand on Windows.)"
+    },
+    {
+      "id": "kinetic",
+      "group": "makers",
+      "name": "kinetic-reel",
+      "repo": "repos/tuzhechen2005_opus-video-skills",
+      "skill": "kinetic-reel",
+      "status": "verified",
+      "example": "fire",
+      "what": "Bold kinetic typography reels with HUD micro-type, three.js layers (particle terrain, liquid marble, chrome knot) and a beat-locked synth score. 16:9.",
+      "speed": "~0.1 s per frame",
+      "needs": "nothing",
+      "styles": [
+        {
+          "id": "type",
+          "name": "Kinetic type",
+          "example": "examples/kinetic-reel--fire.mp4"
+        }
+      ],
+      "build": "demos/kinetic: reel/cues.js (scene starts + hits), reel/reel.js (one function per shot, SCENES, TR); music/score.mjs must match the cue names; npm run frames; node music/score.mjs; npm run encode."
+    },
+    {
+      "id": "whatif",
+      "group": "makers",
+      "name": "what-if-animation",
+      "repo": "repos/kelano86_what-if-animation",
+      "skill": "what-if-animation",
+      "status": "verified",
+      "example": "fire",
+      "what": "Dusk-lit stick-figure 'What If' episodes in Remotion. Voice was ElevenLabs; Kokoro works instead (no word timings needed for short pieces).",
+      "speed": "~2 min for 5 s",
+      "needs": "nothing for visuals; ElevenLabs only for its own SFX/voice tools",
+      "styles": [
+        {
+          "id": "whatif",
+          "name": "What If",
+          "example": "examples/what-if-animation--fire.mp4"
+        }
+      ],
+      "build": "demos/whatif/src/episodes/<slug>/{index.tsx,shots.tsx,timeline.json} + register in episodes/index.ts; voice to public/<slug>/voice.mp3; npx remotion render src/index.ts <Id> out/x.mp4."
+    },
+    {
+      "id": "hyperframes",
+      "group": "makers",
+      "name": "HyperFrames",
+      "repo": "repos/heygen-com_hyperframes",
+      "skill": "hyperframes (+ cli, registry, media-use)",
+      "status": "verified",
+      "example": "fire",
+      "what": "HTML + CSS + GSAP rendered to video: motion graphics, explainers, captions, overlays, 450 ready blocks.",
+      "speed": "~1.5 min for 5 s",
+      "needs": "nothing (telemetry off: HYPERFRAMES_NO_TELEMETRY=1 DO_NOT_TRACK=1)",
+      "styles": [
+        {
+          "id": "motion",
+          "name": "Motion graphics",
+          "example": "examples/hyperframes--fire.mp4"
+        }
+      ],
+      "build": "demos/hyperframes-fire/index.html (data-composition-id, data-width/height/start/duration, paused GSAP timeline in window.__timelines); npx hyperframes@0.9.33 check / snapshot --at / render --output."
+    },
+    {
+      "id": "remotion",
+      "group": "makers",
+      "name": "Remotion (skills)",
+      "repo": "repos/remotion-dev_skills",
+      "skill": "remotion-*",
+      "status": "verified",
+      "example": "fire",
+      "what": "React video: springs, interpolate, SVG, three.js, captions, maps. The base under what-if, cartoon-3d and motion-studio.",
+      "speed": "~30 s for 5 s",
+      "needs": "nothing",
+      "styles": [
+        {
+          "id": "react",
+          "name": "React motion",
+          "example": "examples/remotion--fire.mp4"
+        }
+      ],
+      "build": "demos/cartoon3d (a Remotion project): src/Fire.tsx + Composition in src/index.tsx; npx remotion render src/index.tsx Fire out/x.mp4. Set TEMP/TMP to <build>/tmp-remotion."
+    },
+    {
+      "id": "claymation",
+      "group": "makers",
+      "name": "blender-claymation",
+      "repo": "repos/angrypenguinpng_blender-claymation-skill",
+      "skill": "blender-claymation",
+      "status": "verified",
+      "example": "fire",
+      "what": "Real Blender Cycles clay with fingerprints, 12 fps stop motion, miniature sets.",
+      "speed": "slow on this PC: ~30 s per frame at 720x405 (5 s = ~30 min)",
+      "needs": "Blender 5.3 (installed)",
+      "styles": [
+        {
+          "id": "clay",
+          "name": "Blender clay",
+          "example": "examples/blender-claymation--fire.mp4"
+        }
+      ],
+      "build": "demos/claymation/scenes/<scene>.py (pattern: clay_fire.py, use plocal() for parenting); BLENDER=<blender.exe> bash .claude/skills/blender-claymation/scripts/blender.sh <scene.py> --still N / --res 720 406 --samples 28; encode with even sizes."
+    },
+    {
+      "id": "motion-studio",
+      "group": "makers",
+      "name": "motion-studio",
+      "repo": "repos/Vladic20_tvhead-studio",
+      "skill": "motion-studio",
+      "status": "verified",
+      "example": "fire",
+      "what": "Remotion kit: anime opening (toon, impact frames, power cards) and a motion reel (kinetic type, voxel mascot). Scenes are cued on spoken words.",
+      "speed": "~1 min for 20 s",
+      "needs": "TVHEAD_STUDIO=<build>/studio (voice via Kokoro)",
+      "styles": [
+        {
+          "id": "anime",
+          "name": "Anime opening",
+          "example": "examples/motion-studio--anime.mp4"
+        },
+        {
+          "id": "reel",
+          "name": "Motion reel (kinetic type + voxel mascot)",
+          "example": "examples/motion-studio--reel.mp4"
+        }
+      ],
+      "build": "demos/motion-studio: tools/script.mjs (scene ids per style), Root.tsx component; npm run voice; node tools/music.mjs; render. Cue words in the style's .tsx (W(scene, line, word)) must exist in your script."
+    },
+    {
+      "id": "lemo",
+      "group": "makers",
+      "name": "lemo-opuscar (66 film styles)",
+      "repo": "repos/lemomo-ai_lemo-opuscar",
+      "skill": "lemo-opuscar",
+      "status": "verified",
+      "example": "the style's own demo film",
+      "what": "Short films in 66 styles (shadow puppet, ukiyo-e, impasto, risograph, satellite briefing, teardown…). Each style is a full code film.",
+      "speed": "the 54 s shadow-puppet film rendered in 3 min; a new film is a 30-60 min directed build",
+      "needs": "core deps installed; voice/music tiers on demand",
+      "styles": [
+        {
+          "id": "archive-lighttable",
+          "name": "Archive Light Table",
+          "example": "examples/lemo-opuscar--archive-lighttable.mp4"
+        },
+        {
+          "id": "art-deco",
+          "name": "Art Deco",
+          "example": "examples/lemo-opuscar--art-deco.mp4"
+        },
+        {
+          "id": "ascii-crt",
+          "name": "ASCII / CRT Terminal",
+          "example": "examples/lemo-opuscar--ascii-crt.mp4"
+        },
+        {
+          "id": "backrooms",
+          "name": "Liminal Found Footage",
+          "example": "examples/lemo-opuscar--backrooms.mp4"
+        },
+        {
+          "id": "blueprint",
+          "name": "Blueprint",
+          "example": "examples/lemo-opuscar--blueprint.mp4"
+        },
+        {
+          "id": "brick-toy",
+          "name": "Brick Toy",
+          "example": "examples/lemo-opuscar--brick-toy.mp4"
+        },
+        {
+          "id": "briefing-board",
+          "name": "Engineering Briefing Board",
+          "example": "examples/lemo-opuscar--briefing-board.mp4"
+        },
+        {
+          "id": "caption-news",
+          "name": "Caption News",
+          "example": "examples/lemo-opuscar--caption-news.mp4"
+        },
+        {
+          "id": "cel-anime-80s",
+          "name": "80s Cel Anime",
+          "example": "examples/lemo-opuscar--cel-anime-80s.mp4"
+        },
+        {
+          "id": "chalkboard",
+          "name": "Chalkboard",
+          "example": "examples/lemo-opuscar--chalkboard.mp4"
+        },
+        {
+          "id": "circuit-board",
+          "name": "Circuit Board",
+          "example": "examples/lemo-opuscar--circuit-board.mp4"
+        },
+        {
+          "id": "city-symphony",
+          "name": "Time-lapse Symphony",
+          "example": "examples/lemo-opuscar--city-symphony.mp4"
+        },
+        {
+          "id": "countdown",
+          "name": "Live Countdown Split-screen",
+          "example": "examples/lemo-opuscar--countdown.mp4"
+        },
+        {
+          "id": "crayon-book",
+          "name": "Crayon Picture Book",
+          "example": "examples/lemo-opuscar--crayon-book.mp4"
+        },
+        {
+          "id": "dark-keynote",
+          "name": "Dark Tech Keynote",
+          "example": "examples/lemo-opuscar--dark-keynote.mp4"
+        },
+        {
+          "id": "data-physical",
+          "name": "Data Physicalization",
+          "example": "examples/lemo-opuscar--data-physical.mp4"
+        },
+        {
+          "id": "dataviz",
+          "name": "Data Storytelling",
+          "example": "examples/lemo-opuscar--dataviz.mp4"
+        },
+        {
+          "id": "desktop-flythrough",
+          "name": "Desktop Flythrough",
+          "example": "examples/lemo-opuscar--desktop-flythrough.mp4"
+        },
+        {
+          "id": "engraving",
+          "name": "Copperplate Engraving",
+          "example": "examples/lemo-opuscar--engraving.mp4"
+        },
+        {
+          "id": "game-show",
+          "name": "Game Show Flat",
+          "example": "examples/lemo-opuscar--game-show.mp4"
+        },
+        {
+          "id": "glass-product",
+          "name": "Glass Product Render",
+          "example": "examples/lemo-opuscar--glass-product.mp4"
+        },
+        {
+          "id": "halftone-dossier",
+          "name": "Halftone Dossier",
+          "example": "examples/lemo-opuscar--halftone-dossier.mp4"
+        },
+        {
+          "id": "hd-2d",
+          "name": "HD-2D",
+          "example": "examples/lemo-opuscar--hd-2d.mp4"
+        },
+        {
+          "id": "hologram-hud",
+          "name": "Sci-fi Hologram HUD",
+          "example": "examples/lemo-opuscar--hologram-hud.mp4"
+        },
+        {
+          "id": "impasto",
+          "name": "Impasto · Palette Knife",
+          "example": "examples/lemo-opuscar--impasto.mp4"
+        },
+        {
+          "id": "ink-wash",
+          "name": "Chinese Ink Wash",
+          "example": "examples/lemo-opuscar--ink-wash.mp4"
+        },
+        {
+          "id": "iso-infographic",
+          "name": "Isometric Infographic",
+          "example": "examples/lemo-opuscar--iso-infographic.mp4"
+        },
+        {
+          "id": "isometric-picture-book",
+          "name": "Isometric Picture Book",
+          "example": "examples/lemo-opuscar--isometric-picture-book.mp4"
+        },
+        {
+          "id": "kino-montage",
+          "name": "Constructivist Montage",
+          "example": "examples/lemo-opuscar--kino-montage.mp4"
+        },
+        {
+          "id": "lidar-survey",
+          "name": "LiDAR Survey",
+          "example": "examples/lemo-opuscar--lidar-survey.mp4"
+        },
+        {
+          "id": "living-screencast",
+          "name": "Living Screencast",
+          "example": "examples/lemo-opuscar--living-screencast.mp4"
+        },
+        {
+          "id": "lowpoly-island",
+          "name": "Low-poly Isometric Island",
+          "example": "examples/lemo-opuscar--lowpoly-island.mp4"
+        },
+        {
+          "id": "memphis-diorama",
+          "name": "Memphis Diorama",
+          "example": "examples/lemo-opuscar--memphis-diorama.mp4"
+        },
+        {
+          "id": "microgame",
+          "name": "Microgame Frenzy",
+          "example": "examples/lemo-opuscar--microgame.mp4"
+        },
+        {
+          "id": "microscope",
+          "name": "Microscope Story",
+          "example": "examples/lemo-opuscar--microscope.mp4"
+        },
+        {
+          "id": "midcentury-toon",
+          "name": "Mid-century Cartoon",
+          "example": "examples/lemo-opuscar--midcentury-toon.mp4"
+        },
+        {
+          "id": "news-package",
+          "name": "Broadcast News Package",
+          "example": "examples/lemo-opuscar--news-package.mp4"
+        },
+        {
+          "id": "newsreel",
+          "name": "1920s Newsreel",
+          "example": "examples/lemo-opuscar--newsreel.mp4"
+        },
+        {
+          "id": "one-line",
+          "name": "One-line Drawing",
+          "example": "examples/lemo-opuscar--one-line.mp4"
+        },
+        {
+          "id": "paper-lantern",
+          "name": "Paper-cut Lightbox",
+          "example": "examples/lemo-opuscar--paper-lantern.mp4"
+        },
+        {
+          "id": "paper-popup",
+          "name": "Paper Pop-up Book",
+          "example": "examples/lemo-opuscar--paper-popup.mp4"
+        },
+        {
+          "id": "papercut-red",
+          "name": "Red Paper-cut",
+          "example": "examples/lemo-opuscar--papercut-red.mp4"
+        },
+        {
+          "id": "pictogram-motion",
+          "name": "Pictogram Motion",
+          "example": "examples/lemo-opuscar--pictogram-motion.mp4"
+        },
+        {
+          "id": "pixel-rpg",
+          "name": "16-bit Pixel RPG",
+          "example": "examples/lemo-opuscar--pixel-rpg.mp4"
+        },
+        {
+          "id": "printed-long-take",
+          "name": "Printed Long Take",
+          "example": "examples/lemo-opuscar--printed-long-take.mp4"
+        },
+        {
+          "id": "risograph",
+          "name": "Risograph Print",
+          "example": "examples/lemo-opuscar--risograph.mp4"
+        },
+        {
+          "id": "rubber-hose",
+          "name": "1930s Rubber Hose Cartoon",
+          "example": "examples/lemo-opuscar--rubber-hose.mp4"
+        },
+        {
+          "id": "satellite-briefing",
+          "name": "Satellite Briefing",
+          "example": "examples/lemo-opuscar--satellite-briefing.mp4"
+        },
+        {
+          "id": "scifi-toon",
+          "name": "Sci-Fi Sitcom Toon",
+          "example": "examples/lemo-opuscar--scifi-toon.mp4"
+        },
+        {
+          "id": "shadow-puppet",
+          "name": "Shadow Puppetry",
+          "example": "examples/lemo-opuscar--shadow-puppet.mp4"
+        },
+        {
+          "id": "silent-film",
+          "name": "1920s Silent Film",
+          "example": "examples/lemo-opuscar--silent-film.mp4"
+        },
+        {
+          "id": "silkscreen-poster",
+          "name": "Silkscreen Travel Poster",
+          "example": "examples/lemo-opuscar--silkscreen-poster.mp4"
+        },
+        {
+          "id": "spy-titles",
+          "name": "60s Spy Title Sequence",
+          "example": "examples/lemo-opuscar--spy-titles.mp4"
+        },
+        {
+          "id": "stained-glass",
+          "name": "Stained Glass",
+          "example": "examples/lemo-opuscar--stained-glass.mp4"
+        },
+        {
+          "id": "swiss-motion",
+          "name": "Swiss Motion Graphics",
+          "example": "examples/lemo-opuscar--swiss-motion.mp4"
+        },
+        {
+          "id": "teardown",
+          "name": "Exploded Teardown",
+          "example": "examples/lemo-opuscar--teardown.mp4"
+        },
+        {
+          "id": "telestrator",
+          "name": "Sports Telestrator",
+          "example": "examples/lemo-opuscar--telestrator.mp4"
+        },
+        {
+          "id": "tilt-shift",
+          "name": "Tilt-Shift Miniature",
+          "example": "examples/lemo-opuscar--tilt-shift.mp4"
+        },
+        {
+          "id": "transit-map",
+          "name": "Transit Map",
+          "example": "examples/lemo-opuscar--transit-map.mp4"
+        },
+        {
+          "id": "ukiyoe",
+          "name": "Ukiyo-e",
+          "example": "examples/lemo-opuscar--ukiyoe.mp4"
+        },
+        {
+          "id": "urban-sketch",
+          "name": "Urban Sketch · Pen & Wash",
+          "example": "examples/lemo-opuscar--urban-sketch.mp4"
+        },
+        {
+          "id": "visual-investigation",
+          "name": "Visual Investigation",
+          "example": "examples/lemo-opuscar--visual-investigation.mp4"
+        },
+        {
+          "id": "watercolor",
+          "name": "Watercolor Brush",
+          "example": "examples/lemo-opuscar--watercolor.mp4"
+        },
+        {
+          "id": "white-model",
+          "name": "Projection on White Model",
+          "example": "examples/lemo-opuscar--white-model.mp4"
+        },
+        {
+          "id": "whiteboard",
+          "name": "Whiteboard Explainer",
+          "example": "examples/lemo-opuscar--whiteboard.mp4"
+        },
+        {
+          "id": "woodcut",
+          "name": "Woodcut Print",
+          "example": "examples/lemo-opuscar--woodcut.mp4"
+        }
+      ],
+      "build": "LEMO_OPUSCAR_HOME=<build>/repos/lemomo-ai_lemo-opuscar; follow its AGENTS.md (treatment → look → produce); node core/render/video.mjs <film dir>."
+    },
+    {
+      "id": "cartoon3d",
+      "group": "makers",
+      "name": "cartoon-3d-short",
+      "repo": "repos/mromidev_claude-animated-shorts",
+      "skill": "cartoon-3d-short",
+      "status": "verified",
+      "example": "fire",
+      "what": "2D cartoon cards in a painted 3D world (three.js in Remotion). The world renders; its post-processing (ink lines, lens blur, grade) does not run on this PC's setup.",
+      "speed": "~1 min for 5 s (without post)",
+      "needs": "Kenney CC0 kits (downloaded into demos/cartoon3d/public/bridge/kenney)",
+      "styles": [
+        {
+          "id": "fire",
+          "name": "Cartoon cards in a 3D world",
+          "example": "examples/cartoon-3d-short--fire.mp4"
+        }
+      ],
+      "build": "demos/cartoon3d/src/videos/bridge_world; render with --gl=angle --props='{\"post\":{\"off\":true}}'."
+    },
+    {
+      "id": "blender3d",
+      "group": "makers",
+      "name": "blender-3d (+ Blender MCP)",
+      "repo": "repos/Vladic20_tvhead-studio · repos/ahujasid_mcp-for-blender",
+      "skill": "blender-3d",
+      "status": "verified",
+      "example": "fire",
+      "what": "3D scenes and plates in Blender (EEVEE/Cycles, cozy or toon look) to composite into other videos. The Blender MCP lets Claude edit an open Blender scene live (connection tested).",
+      "speed": "EEVEE ~4-8 s per frame at 540x960",
+      "needs": "Blender 5.3; MCP: Blender open with the add-on",
+      "styles": [
+        {
+          "id": "toon",
+          "name": "Toon clay (Blender EEVEE)",
+          "example": "examples/blender-3d--fire.mp4"
+        }
+      ],
+      "build": "blender -b --factory-startup -P .claude/skills/blender-3d/scripts/plate.py -- --out <dir> --look toon|cozy --shot hop|turntable."
+    },
+    {
+      "id": "story-video",
+      "group": "makers",
+      "name": "story-video-studio (stickman survival)",
+      "repo": "repos/Theoxmotion_story-video-studio__backup-morgsdoti",
+      "skill": "(one prompt: story_video_prompt.md)",
+      "status": "verified",
+      "example": "fire",
+      "what": "One prompt that builds a 60-90 s stickman survival story with 3D low-poly sets and HUD. Claude works alone for 1-2 h.",
+      "speed": "1-2 h per video",
+      "needs": "an empty folder",
+      "styles": [
+        {
+          "id": "survival",
+          "name": "Stickman survival + HUD",
+          "example": "examples/story-video-studio--fire.mp4"
+        }
+      ],
+      "build": "Paste story_video_prompt.md into Claude Code in an empty subfolder; answer 'you pick'."
+    },
+    {
+      "id": "exploded-product",
+      "group": "makers",
+      "name": "Product exploded view (3D)",
+      "repo": ".claude/skills/exploded-product (made for you)",
+      "skill": "exploded-product",
+      "status": "verified",
+      "example": "fire",
+      "what": "Premium product teardown in 3D: the object turns, its parts separate in layers with leader lines and labels. Reusable for watches, headphones, cameras, sneakers.",
+      "speed": "about 1-3 min to render 5 s (three.js / canvas, frame by frame)",
+      "needs": "nothing (free, local)",
+      "styles": [
+        {
+          "id": "studio",
+          "name": "Exploded view: lighter",
+          "example": "examples/exploded-product--fire.mp4"
+        },
+        {
+          "id": "watch",
+          "name": "Exploded view: watch",
+          "example": "examples/exploded-product--watch.mp4"
+        }
+      ],
+      "build": "Read .claude/skills/exploded-product/SKILL.md. Copy .claude/skills/exploded-product/examples/fire as the template into the project's work folder, build the scene with the engine (window.DUR / window.render(t) / window.READY), check stills with node video-studio/tools/page-render.mjs <dir> --stills 0.5,2.5 --size WxH, render with node video-studio/tools/page-render.mjs <dir> --out <clip.mp4> --size WxH --fps 30."
+    },
+    {
+      "id": "sci-flat",
+      "group": "makers",
+      "name": "Science: flat vector diagram",
+      "repo": ".claude/skills/sci-flat (made for you)",
+      "skill": "sci-flat",
+      "status": "verified",
+      "example": "fire",
+      "what": "Modern textbook science diagrams: flat shapes, numbered callouts, draw-on arrows and graphs that build step by step.",
+      "speed": "about 1-3 min to render 5 s (three.js / canvas, frame by frame)",
+      "needs": "nothing (free, local)",
+      "styles": [
+        {
+          "id": "flat",
+          "name": "Flat textbook diagram",
+          "example": "examples/sci-flat--fire.mp4"
+        }
+      ],
+      "build": "Read .claude/skills/sci-flat/SKILL.md. Copy .claude/skills/sci-flat/examples/fire as the template into the project's work folder, build the scene with the engine (window.DUR / window.render(t) / window.READY), check stills with node video-studio/tools/page-render.mjs <dir> --stills 0.5,2.5 --size WxH, render with node video-studio/tools/page-render.mjs <dir> --out <clip.mp4> --size WxH --fps 30."
+    },
+    {
+      "id": "sci-fluoro",
+      "group": "makers",
+      "name": "Science: fluorescence microscopy",
+      "repo": ".claude/skills/sci-fluoro (made for you)",
+      "skill": "sci-fluoro",
+      "status": "verified",
+      "example": "fire",
+      "what": "Under-the-microscope explainers: glowing cyan/magenta/yellow structures on black, bloom, grain, scale bar and instrument read-outs.",
+      "speed": "about 30 s-3 min to render 5 s (frame by frame)",
+      "needs": "nothing (free, local)",
+      "styles": [
+        {
+          "id": "fluoro",
+          "name": "Fluorescence microscope",
+          "example": "examples/sci-fluoro--fire.mp4"
+        }
+      ],
+      "build": "Read .claude/skills/sci-fluoro/SKILL.md. Copy .claude/skills/sci-fluoro/examples/fire as the template into the project's work folder, build the scene with the engine (window.DUR / window.render(t) / window.READY), check stills with node video-studio/tools/page-render.mjs <dir> --stills 0.5,2.5 --size WxH, render with node video-studio/tools/page-render.mjs <dir> --out <clip.mp4> --size WxH --fps 30."
+    },
+    {
+      "id": "sci-molecular",
+      "group": "makers",
+      "name": "Science: 3D molecular",
+      "repo": ".claude/skills/sci-molecular (made for you)",
+      "skill": "sci-molecular",
+      "status": "verified",
+      "example": "fire",
+      "what": "3D ball-and-stick molecules with standard chemistry colours, soft studio light, reactions where bonds break and form.",
+      "speed": "about 30 s-3 min to render 5 s (frame by frame)",
+      "needs": "nothing (free, local)",
+      "styles": [
+        {
+          "id": "molecular",
+          "name": "3D molecules",
+          "example": "examples/sci-molecular--fire.mp4"
+        }
+      ],
+      "build": "Read .claude/skills/sci-molecular/SKILL.md. Copy .claude/skills/sci-molecular/examples/fire as the template into the project's work folder, build the scene with the engine (window.DUR / window.render(t) / window.READY), check stills with node video-studio/tools/page-render.mjs <dir> --stills 0.5,2.5 --size WxH, render with node video-studio/tools/page-render.mjs <dir> --out <clip.mp4> --size WxH --fps 30."
+    },
+    {
+      "id": "sci-notebook",
+      "group": "makers",
+      "name": "Science: lab notebook sketch",
+      "repo": ".claude/skills/sci-notebook (made for you)",
+      "skill": "sci-notebook",
+      "status": "verified",
+      "example": "fire",
+      "what": "A scientist's notebook: graph paper, ink drawn stroke by stroke, margin notes, hand-written equations.",
+      "speed": "about 30 s-3 min to render 5 s (frame by frame)",
+      "needs": "nothing (free, local)",
+      "styles": [
+        {
+          "id": "notebook",
+          "name": "Lab notebook",
+          "example": "examples/sci-notebook--fire.mp4"
+        }
+      ],
+      "build": "Read .claude/skills/sci-notebook/SKILL.md. Copy .claude/skills/sci-notebook/examples/fire as the template into the project's work folder, build the scene with the engine (window.DUR / window.render(t) / window.READY), check stills with node video-studio/tools/page-render.mjs <dir> --stills 0.5,2.5 --size WxH, render with node video-studio/tools/page-render.mjs <dir> --out <clip.mp4> --size WxH --fps 30."
+    }
+  ]
+}

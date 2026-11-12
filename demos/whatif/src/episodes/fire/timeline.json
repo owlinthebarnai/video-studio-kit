@@ -1,0 +1,60 @@
+{
+ "slug": "fire",
+ "title": "WHAT IF YOU DISCOVERED FIRE?",
+ "fps": 30,
+ "total": 150,
+ "segments": [
+  {
+   "shot": "Sh1",
+   "a": 0,
+   "b": 55,
+   "t0": 0,
+   "t1": 55,
+   "line": "What if you discovered fire?"
+  },
+  {
+   "shot": "Sh2",
+   "a": 55,
+   "b": 85,
+   "t0": 0,
+   "t1": 30,
+   "line": "Rub, rub..."
+  },
+  {
+   "shot": "Sh3",
+   "a": 85,
+   "b": 150,
+   "t0": 0,
+   "t1": 65,
+   "line": "Fire!"
+  }
+ ],
+ "shots": [
+  {
+   "id": "Sh1",
+   "key": 20,
+   "len": 55,
+   "first": 0,
+   "size": "wide"
+  },
+  {
+   "id": "Sh2",
+   "key": 20,
+   "len": 30,
+   "first": 55,
+   "size": "insert"
+  },
+  {
+   "id": "Sh3",
+   "key": 30,
+   "len": 65,
+   "first": 85,
+   "size": "wide"
+  }
+ ],
+ "fx": [],
+ "audio": {
+  "voice": "fire/voice.mp3",
+  "voiceVol": 1
+ }
+}

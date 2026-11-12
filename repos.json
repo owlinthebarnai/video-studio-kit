@@ -1,0 +1,92 @@
+[
+  {
+    "dir": "ahujasid_mcp-for-blender",
+    "url": "https://github.com/ahujasid/mcp-for-blender.git",
+    "commit": "2e4b0bc294694b1570d76ed01be657c22e6d02a0"
+  },
+  {
+    "dir": "angrypenguinpng_blender-claymation-skill",
+    "url": "https://github.com/angrypenguinpng/blender-claymation-skill.git",
+    "commit": "0be7cc00f7c5dd80b50fab53f88d6527102ccc9c"
+  },
+  {
+    "dir": "cth9191_animate",
+    "url": "https://github.com/cth9191/animate",
+    "commit": "7e5eb56feb2dd573f890e1b7b34748af43d58263"
+  },
+  {
+    "dir": "greensock_gsap-skills",
+    "url": "https://github.com/greensock/gsap-skills.git",
+    "commit": "aed9cfd3277740755f6bfc1155c7aa645403b760"
+  },
+  {
+    "dir": "heygen-com_hyperframes",
+    "url": "https://github.com/heygen-com/hyperframes.git",
+    "commit": "12d954a1fe59b9e2ffa29ab5b66536d26a5ef15e"
+  },
+  {
+    "dir": "JohnHeibel_ClaudeAnimationBase",
+    "url": "https://github.com/JohnHeibel/ClaudeAnimationBase.git",
+    "commit": "0ac8bf2b31942376cb6b8c4074715595d512acd2"
+  },
+  {
+    "dir": "kelano86_what-if-animation",
+    "url": "https://github.com/kelano86/what-if-animation",
+    "commit": "8092fb5e825e55456d1d47fec0ebf595cb93cc0d"
+  },
+  {
+    "dir": "lemomo-ai_lemo-opuscar",
+    "url": "https://github.com/lemomo-ai/lemo-opuscar.git",
+    "commit": "9eb7739a0fca4c6990fe966cb8b87b1930f7193a"
+  },
+  {
+    "dir": "Leonxlnx_earshot",
+    "url": "https://github.com/Leonxlnx/earshot.git",
+    "commit": "4ac3d2ac2b151e1c23376f9ce7f3047a17050013"
+  },
+  {
+    "dir": "LottieFiles_motion-design-skill",
+    "url": "https://github.com/LottieFiles/motion-design-skill.git",
+    "commit": "f9a8a041b85185ee4881b3471d3415e939aac772"
+  },
+  {
+    "dir": "mromidev_claude-animated-shorts",
+    "url": "https://github.com/mromidev/claude-animated-shorts",
+    "commit": "e3b817b6afc6cd413466d43f11ba31209e034bbf"
+  },
+  {
+    "dir": "openai_whisper",
+    "url": "https://github.com/openai/whisper.git",
+    "commit": "86098128c0b4f24f0e2aa2994de830614b474227"
+  },
+  {
+    "dir": "remotion-dev_skills",
+    "url": "https://github.com/remotion-dev/skills.git",
+    "commit": "1af7e69a2a613437d46095924057970a6a7df40d"
+  },
+  {
+    "dir": "showheyohtaki_motion-prompt",
+    "url": "https://github.com/showheyohtaki/motion-prompt",
+    "commit": "7819d3879eb7d5a1475c11c001bedffb5cab64af"
+  },
+  {
+    "dir": "Theoxmotion_story-video-studio__backup-morgsdoti",
+    "url": "https://github.com/morgsdoti/story-video-studio",
+    "commit": "60714dfd19f4fc2838dbea9786630e103d929337"
+  },
+  {
+    "dir": "tuzhechen2005_opus-video-skills",
+    "url": "https://github.com/tuzhechen2005/opus-video-skills.git",
+    "commit": "59744a69c7b916cfbe4c4ec84006b0c2f5e2fde1"
+  },
+  {
+    "dir": "Vladic20_tvhead-studio",
+    "url": "https://github.com/Vladic20/tvhead-studio",
+    "commit": "c18305fcf214dc625c675eaee1da2bb7bfd95904"
+  },
+  {
+    "dir": "zhuyansen_awesome-claude-video-skills",
+    "url": "https://github.com/zhuyansen/awesome-claude-video-skills.git",
+    "commit": "84d86811a655d7eba91115e669c97fcd4e068d55"
+  }
+]

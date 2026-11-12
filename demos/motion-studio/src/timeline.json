@@ -1,0 +1,254 @@
+{
+ "fps": 30,
+ "total": 629,
+ "scenes": [
+  {
+   "id": "title",
+   "from": 9,
+   "to": 105,
+   "lines": [
+    {
+     "say": "The discovery of fire. Episode one.",
+     "cap": "episode one",
+     "file": "voice/title-0.mp3",
+     "from": 9,
+     "lead": 0,
+     "dur": 71,
+     "words": [
+      [
+       "The",
+       9
+      ],
+      [
+       "discovery",
+       15
+      ],
+      [
+       "of",
+       37
+      ],
+      [
+       "fire.",
+       43
+      ],
+      [
+       "Episode",
+       57
+      ],
+      [
+       "one.",
+       74
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "hero",
+   "from": 105,
+   "to": 218,
+   "lines": [
+    {
+     "say": "One cold night, a caveman picks up two sticks.",
+     "cap": "two sticks",
+     "file": "voice/hero-0.mp3",
+     "from": 105,
+     "lead": 0,
+     "dur": 88,
+     "words": [
+      [
+       "One",
+       105
+      ],
+      [
+       "cold",
+       111
+      ],
+      [
+       "night,",
+       118
+      ],
+      [
+       "a",
+       125
+      ],
+      [
+       "caveman",
+       131
+      ],
+      [
+       "picks",
+       160
+      ],
+      [
+       "up",
+       167
+      ],
+      [
+       "two",
+       176
+      ],
+      [
+       "sticks.",
+       183
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "power",
+   "from": 218,
+   "to": 309,
+   "lines": [
+    {
+     "say": "He rubs them. Faster! Harder! Hotter!",
+     "cap": "faster",
+     "file": "voice/power-0.mp3",
+     "from": 218,
+     "lead": 0,
+     "dur": 65,
+     "words": [
+      [
+       "He",
+       218
+      ],
+      [
+       "rubs",
+       225
+      ],
+      [
+       "them.",
+       233
+      ],
+      [
+       "Faster!",
+       240
+      ],
+      [
+       "Harder!",
+       254
+      ],
+      [
+       "Hotter!",
+       269
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "bug",
+   "from": 309,
+   "to": 393,
+   "lines": [
+    {
+     "say": "Smoke.",
+     "cap": "smoke",
+     "file": "voice/bug-0.mp3",
+     "from": 309,
+     "lead": 0,
+     "dur": 19,
+     "words": [
+      [
+       "Smoke.",
+       309
+      ]
+     ]
+    },
+    {
+     "say": "Then one spark.",
+     "cap": "spark",
+     "file": "voice/bug-1.mp3",
+     "from": 338,
+     "lead": 0,
+     "dur": 29,
+     "words": [
+      [
+       "Then",
+       338
+      ],
+      [
+       "one",
+       347
+      ],
+      [
+       "spark.",
+       357
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "render",
+   "from": 393,
+   "to": 436,
+   "lines": [
+    {
+     "say": "Fire!",
+     "cap": "fire",
+     "file": "voice/render-0.mp3",
+     "from": 393,
+     "lead": 0,
+     "dur": 17,
+     "words": [
+      [
+       "Fire!",
+       393
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "end",
+   "from": 436,
+   "to": 629,
+   "lines": [
+    {
+     "say": "Humanity just levelled up. Want one? Comment fire.",
+     "cap": "comment fire",
+     "file": "voice/end-0.mp3",
+     "from": 436,
+     "lead": 0,
+     "dur": 99,
+     "words": [
+      [
+       "Humanity",
+       436
+      ],
+      [
+       "just",
+       460
+      ],
+      [
+       "levelled",
+       466
+      ],
+      [
+       "up.",
+       497
+      ],
+      [
+       "Want",
+       503
+      ],
+      [
+       "one?",
+       509
+      ],
+      [
+       "Comment",
+       518
+      ],
+      [
+       "fire.",
+       530
+      ]
+     ]
+    }
+   ]
+  }
+ ]
+}

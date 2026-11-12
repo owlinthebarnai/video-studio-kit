@@ -1,0 +1,23 @@
+{
+ "v": 2,
+ "text": "One cold night, two sticks...",
+ "voice": "bf322df2096a46f18c579d0baa36f41d",
+ "model": "fish-audio/s2.1-pro-free:free",
+ "fileDur": 1.899,
+ "speech": [
+  [
+   0,
+   0.955
+  ],
+  [
+   1.043,
+   1.524
+  ],
+  [
+   1.605,
+   1.739
+  ]
+ ],
+ "stt": null,
+ "sttTried": false
+}

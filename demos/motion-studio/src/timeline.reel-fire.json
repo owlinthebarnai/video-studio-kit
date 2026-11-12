@@ -1,0 +1,93 @@
+{
+ "fps": 30,
+ "total": 224,
+ "scenes": [
+  {
+   "id": "night",
+   "from": 9,
+   "to": 51,
+   "lines": [
+    {
+     "say": "One cold night.",
+     "cap": "one cold night",
+     "file": "voice/night-0.mp3",
+     "from": 9,
+     "lead": 0,
+     "dur": 32,
+     "words": [
+      [
+       "One",
+       9
+      ],
+      [
+       "cold",
+       20
+      ],
+      [
+       "night.",
+       30
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "rub",
+   "from": 51,
+   "to": 104,
+   "lines": [
+    {
+     "say": "Two sticks. Rub. Faster!",
+     "cap": "two sticks. rub. faster",
+     "file": "voice/rub-0.mp3",
+     "from": 51,
+     "lead": 0,
+     "dur": 43,
+     "words": [
+      [
+       "Two",
+       51
+      ],
+      [
+       "sticks.",
+       59
+      ],
+      [
+       "Rub.",
+       68
+      ],
+      [
+       "Faster!",
+       76
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fire",
+   "from": 104,
+   "to": 224,
+   "lines": [
+    {
+     "say": "Then. Fire!",
+     "cap": "then fire",
+     "file": "voice/fire-0.mp3",
+     "from": 104,
+     "lead": 0,
+     "dur": 26,
+     "words": [
+      [
+       "Then.",
+       104
+      ],
+      [
+       "Fire!",
+       117
+      ]
+     ]
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,17 @@
+node_modules/
+.venv/
+repos/
+outputs/
+tmp-remotion/
+video-studio/projects/
+video-studio/server.log*
+video-studio/.empty-mcp.json
+studio/tts/*.onnx
+studio/tts/*.bin
+studio/out/
+studio/episodes/*/build/
+**/out/
+**/renders/
+.env*
+*.log
+.DS_Store

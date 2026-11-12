@@ -1,0 +1,22 @@
+{
+  "name": "fire-cutpaper",
+  "title": "The discovery of fire",
+  "format": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 24,
+    "bpm": 120,
+    "duration": 5.0,
+    "frames": 120
+  },
+  "storyFormat": "single beat",
+  "style": "cut-paper",
+  "review": {
+    "safe": {
+      "top": 240,
+      "bottom": 420,
+      "right": 140
+    },
+    "refs": {}
+  }
+}

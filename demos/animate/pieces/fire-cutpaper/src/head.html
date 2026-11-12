@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The discovery of fire</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #1b1714; overflow: hidden; }
+  body { display: flex; align-items: center; justify-content: center; }
+  canvas { height: min(100vh, calc(100vw * 16 / 9)); width: auto; aspect-ratio: 9 / 16; display: block; cursor: pointer; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1080" height="1920"></canvas>
+<script>
+"use strict";
+// =====================================================================
+//  CUT PAPER DEMO — 9:16, 8.0s @ 120 BPM, 24fps. Two eras joined by one shape morph (the moon becomes the sun).
+//  Replace the eras, shots, cues, acts and board with your piece's. Build: node <skill>/tools/build.mjs <this piece dir>
+//  Open index.html in a browser to preview (click to hear the score; ?t=2.5 freezes a frame).
+// =====================================================================
+const FPS = 24, W = 1080, H = 1920;
+const BPM = 120, BEAT = 60 / BPM, E8 = BEAT / 2, E16 = BEAT / 4;   // 0.5 / 0.25 / 0.125s = 12 / 6 / 3 frames
+const DURATION = 5.0;
+const NFRAMES = Math.round(DURATION * FPS);
+const LOOP_T = NFRAMES / FPS;
+const SAFE = { top: 240, bottom: 420, right: 140 };          // 9:16 platform UI; keep content in x 60–940, y 250–1500
+const HAND = '"Ink Free", "Segoe Print", "Bradley Hand", "Chalkboard SE", "Comic Sans MS", "Comic Neue", cursive';   // local handwriting fonts: Windows, macOS, Linux
+const CX = 470;                                               // caption centre (left of the right-hand UI strip)
+
+// eras: [t0, t1, scene]. Boundaries with a BRIDGE (src/bridges.js) morph; the rest are hard cuts.
+const ERA_LIST = [[0, 5, () => sceneFire()]];
+const SHOTS = [
+  //  key     era  t0    t1    title
+  ['fire',    0,   0.0,  5.0,  'two hands rub a stick; smoke; a spark; the first fire'],
+];
+const TIMELINE = {
+  width: W, height: H, fps: FPS, bpm: BPM, duration: DURATION, frames: NFRAMES, loop: LOOP_T, safe: SAFE,
+  format: 'beat-cut',
+  shots: SHOTS.map(([key, era, t0, t1, title], i) => ({ id: i + 1, key, era, t0, t1, title })),
+  cuts: [], morphs: [],
+  cues: { smoke: 1.0, spark: 2.25, joy: 3.0 },
+  acts: [{ name: '1 Fire', role: 'build', t0: 0.0, t1: 5.0 }],
+  board: [
+    { t: 1.5, title: 'rubbing the drill', sound: 'a dry scrape on the eighths', next: 'the spark' },
+    { t: 4.0, title: 'fire', sound: 'a whoosh and a warm chord', next: 'loops' },
+  ],
+  narration: [],
+};
+window.TIMELINE = TIMELINE;
