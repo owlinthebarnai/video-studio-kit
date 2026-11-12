@@ -12,6 +12,71 @@
   ],
   "tools": [
     {
+      "id": "animation-styles",
+      "group": "makers",
+      "name": "Claude animation styles",
+      "repo": "kits/claude-animation-styles (your download)",
+      "skill": "claude-animation-styles",
+      "status": "verified",
+      "example": "fire",
+      "what": "Ten looks in code (2D canvas + three.js). One style per scene or switch every beat. Vertical or wide.",
+      "speed": "~2-7 s per frame for the 3D looks, under 1 s for 2D (a 5 s scene: 1-10 min)",
+      "needs": "nothing (free, local)",
+      "styles": [
+        {
+          "id": "pixel",
+          "name": "Pixel art",
+          "example": "examples/animation-styles--pixel.mp4"
+        },
+        {
+          "id": "ps2",
+          "name": "PS2 style",
+          "example": "examples/animation-styles--ps2.mp4"
+        },
+        {
+          "id": "comic",
+          "name": "Comic art",
+          "example": "examples/animation-styles--comic.mp4"
+        },
+        {
+          "id": "brick",
+          "name": "Lego style",
+          "example": "examples/animation-styles--brick.mp4"
+        },
+        {
+          "id": "clay",
+          "name": "Claymation (code)",
+          "example": "examples/animation-styles--clay.mp4"
+        },
+        {
+          "id": "paper",
+          "name": "Paper cutout",
+          "example": "examples/animation-styles--paper.mp4"
+        },
+        {
+          "id": "anime",
+          "name": "Retro anime",
+          "example": "examples/animation-styles--anime.mp4"
+        },
+        {
+          "id": "poly",
+          "name": "Low poly 3D",
+          "example": "examples/animation-styles--poly.mp4"
+        },
+        {
+          "id": "riso",
+          "name": "Risograph",
+          "example": "examples/animation-styles--riso.mp4"
+        },
+        {
+          "id": "mini",
+          "name": "Miniature diorama",
+          "example": "examples/animation-styles--mini.mp4"
+        }
+      ],
+      "build": "demos/animation-styles: story.json (beats with style + seconds) + styles/<style>.js scenes; subject pieces in lib/fire.js (2D) and lib/fire3d.js (3D) are the pattern for new subjects. node render.cjs stills 1,2 / node render.cjs video."
+    },
+    {
       "id": "tvhead",
       "group": "makers",
       "name": "tvhead-video",

@@ -1,0 +1,6 @@
+{ "format": "vertical", "beats": [
+  { "style": "pixel", "seconds": 5, "line": "fire" }, { "style": "ps2", "seconds": 5, "line": "fire" },
+  { "style": "comic", "seconds": 5, "line": "fire" }, { "style": "brick", "seconds": 5, "line": "fire" },
+  { "style": "clay", "seconds": 5, "line": "fire" }, { "style": "paper", "seconds": 5, "line": "fire" },
+  { "style": "anime", "seconds": 5, "line": "fire" }, { "style": "poly", "seconds": 5, "line": "fire" },
+  { "style": "riso", "seconds": 5, "line": "fire" }, { "style": "mini", "seconds": 5, "line": "fire" } ] }

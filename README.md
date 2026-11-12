@@ -4,7 +4,7 @@ Make short animated videos from a prompt, on your own computer, with your own Cl
 
 You get:
 - **Video Studio**, a local web app. Pick a style from more than 100 (each has a 5-second example), write a prompt, and Claude writes a second-by-second script. Edit it, choose music and an optional voice-over, validate, and Claude Code builds the video.
-- **50+ Claude Code skills** for video: tvhead stickman explainers, lemo-opuscar's 66 film styles, HyperFrames, Remotion, kinetic type, painted watercolour, cut paper, what-if stick figures, motion-studio anime and reels, cartoon cards in 3D, story-video survival HUD, Blender clay and toon, exploded product views and four science-explainer styles (flat diagram, fluorescence microscopy, 3D molecular, lab notebook).
+- **50+ Claude Code skills** for video: the ten Claude animation styles (pixel art, PS2, comic, brick toy, claymation, paper cutout, retro anime, low poly, risograph, miniature diorama), tvhead stickman explainers, lemo-opuscar's 66 film styles, HyperFrames, Remotion, kinetic type, painted watercolour, cut paper, what-if stick figures, motion-studio anime and reels, cartoon cards in 3D, story-video survival HUD, Blender clay and toon, exploded product views and four science-explainer styles (flat diagram, fluorescence microscopy, 3D molecular, lab notebook).
 - A free local voice (Kokoro) and generated music. **No API keys.**
 
 All the example clips tell the same story, *the discovery of fire*, so you can compare styles.

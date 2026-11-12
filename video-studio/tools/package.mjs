@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Build the shareable "video-studio-kit" folder from this build folder (re-runnable; the target is replaced each time,
 // except its .git). Leaves out: node_modules, Python venvs, model weights, renders, the user's own projects and episodes,
-// logs, anything without a redistributable licence (Remotion skills are fetched by setup; the claude-animation-styles kit is not shipped).
+// logs, and Remotion's skills (no licence file in their repo: setup fetches them).
 //   node video-studio/tools/package.mjs [targetDir]
 import fs from 'node:fs';
 import path from 'node:path';
@@ -33,15 +33,11 @@ fs.mkdirSync(OUT, { recursive: true });
 const STALE = new Set(['story-video-studio--proof.mp4', 'cartoon-3d-short--builtin.mp4', 'blender-3d--toon.mp4']);
 copy(VS, path.join(OUT, 'video-studio'), {
   skipDirs: new Set([...SKIP_DIRS, 'projects']),
-  filter: (f) => { const n = path.basename(f); if (n.startsWith('.')) return false; if (f.includes(`${path.sep}examples${path.sep}`)) return n.endsWith('.mp4') && !STALE.has(n) && !n.startsWith('animation-styles--'); return true; },
+  filter: (f) => { const n = path.basename(f); if (n.startsWith('.') || n === 'record-demo.cjs') return false; if (f.includes(`${path.sep}examples${path.sep}`)) return n.endsWith('.mp4') && !STALE.has(n); return true; },
 });
-// the animation-styles kit is not shipped: drop it from the catalog copy
-const catFile = path.join(OUT, 'video-studio', 'catalog.json'), cat = JSON.parse(fs.readFileSync(catFile, 'utf8'));
-cat.tools = cat.tools.filter((t) => t.id !== 'animation-styles');
-fs.writeFileSync(catFile, JSON.stringify(cat, null, 2));
 
 // 2. skills: everything except Remotion's (no licence file in its repo: setup fetches them) and the unlicensed kit
-const NO_SHIP = (n) => n.startsWith('remotion-') && n !== 'remotion-to-hyperframes' || n === 'claude-animation-styles';
+const NO_SHIP = (n) => n.startsWith('remotion-') && n !== 'remotion-to-hyperframes';
 for (const n of fs.readdirSync(path.join(BUILD, '.claude', 'skills'))) if (!NO_SHIP(n)) copy(path.join(BUILD, '.claude', 'skills', n), path.join(OUT, '.claude', 'skills', n));
 
 // 3. tvhead studio (Kokoro patch included; models downloaded by setup); only the fire example episodes
@@ -50,7 +46,7 @@ copy(path.join(BUILD, 'studio'), path.join(OUT, 'studio'), {
 });
 
 // 4. demos (the working setups the catalog's build recipes point to), without the kit-based one
-for (const d of fs.readdirSync(path.join(BUILD, 'demos'))) if (d !== 'animation-styles') copy(path.join(BUILD, 'demos', d), path.join(OUT, 'demos', d));
+for (const d of fs.readdirSync(path.join(BUILD, 'demos'))) copy(path.join(BUILD, 'demos', d), path.join(OUT, 'demos', d));
 
 // 5. our additions inside third-party repos (applied by setup after cloning)
 const LEMO = path.join(BUILD, 'repos', 'lemomo-ai_lemo-opuscar');
