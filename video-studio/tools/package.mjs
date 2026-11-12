@@ -66,6 +66,7 @@ if (fs.existsSync(path.join(BUILD, '.mcp.json'))) copy(path.join(BUILD, '.mcp.js
 for (const f of ['README.md', 'THIRD_PARTY.md', 'setup.mjs', '.gitignore', 'start-studio.sh', 'Start Video Studio.cmd']) {
   const src = path.join(VS, 'kit', f); if (fs.existsSync(src)) copy(src, path.join(OUT, f), { skipFile: () => false });
 }
+if (fs.existsSync(path.join(VS, 'kit', 'docs'))) copy(path.join(VS, 'kit', 'docs'), path.join(OUT, 'docs'), { skipFile: () => false });
 fs.rmSync(path.join(OUT, 'video-studio', 'kit'), { recursive: true, force: true });
 fs.rmSync(path.join(OUT, 'video-studio', 'Start Video Studio.cmd'), { force: true });
 
