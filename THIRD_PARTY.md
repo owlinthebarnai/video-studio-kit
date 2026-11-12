@@ -27,6 +27,6 @@ Other assets:
 - Kenney Nature Kit and Fantasy Town Kit models in `demos/cartoon3d/public/` are CC0 (kenney.nl).
 - Kokoro-82M voice model (Apache-2.0), downloaded by setup from the kokoro-onnx releases.
 
-The claude-animation-styles kit (skill `claude-animation-styles`, `demos/animation-styles`) is included by its owner's decision; the fire scenes in `demos/animation-styles/lib/fire.js` and `fire3d.js` were written for this kit.
+The claude-animation-styles kit (skill `claude-animation-styles`, `demos/animation-styles`) is by [@ernestosoftware](https://x.com/ernestosoftware) on X; the fire scenes in `demos/animation-styles/lib/fire.js` and `fire3d.js` were written for this kit.
 
 Our own code (`video-studio/`, the skills video-studio, exploded-product, sci-flat, sci-fluoro, sci-molecular and sci-notebook, the fire example scenes and the Windows fixes) was written with Claude Code.

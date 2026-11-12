@@ -96,7 +96,7 @@ This kit stands on the work of these open-source projects. Thank you to their au
 - [showheyohtaki/motion-prompt](https://github.com/showheyohtaki/motion-prompt): motion-prompt: library of 120 motion moves
 - [tuzhechen2005/opus-video-skills](https://github.com/tuzhechen2005/opus-video-skills): kinetic-reel and painted-animation
 - [zhuyansen/awesome-claude-video-skills](https://github.com/zhuyansen/awesome-claude-video-skills): index of Claude video skills (where many of these were found)
-- **claude-animation-styles** kit: the ten Claude animation styles (included by the repo owner)
+- **claude-animation-styles** kit by [@ernestosoftware](https://x.com/ernestosoftware) on X: the ten Claude animation styles (pixel art, PS2, comic, brick toy, claymation, paper cutout, retro anime, low poly, risograph, miniature diorama)
 
 Built on: [Claude Code](https://claude.com/claude-code), [Remotion](https://www.remotion.dev), [three.js](https://threejs.org), [GSAP](https://gsap.com), [Playwright](https://playwright.dev), [FFmpeg](https://ffmpeg.org), [Blender](https://www.blender.org), the [Kokoro](https://huggingface.co/hexgrad/Kokoro-82M) voice via [kokoro-onnx](https://github.com/thewh1teagle/kokoro-onnx), and [Kenney](https://kenney.nl) CC0 3D models.
 
