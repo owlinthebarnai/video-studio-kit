@@ -18,7 +18,7 @@ This kit bundles or downloads the projects below. Each keeps its own licence: th
 | [lemomo-ai/lemo-opuscar](https://github.com/lemomo-ai/lemo-opuscar) @ `9eb7739a` | MIT | skill lemo-opuscar; cloned by setup; our fire films in `overlays/` |
 | [mromidev/claude-animated-shorts](https://github.com/mromidev/claude-animated-shorts) @ `e3b817b6` | MIT | skill cartoon-3d-short, `demos/cartoon3d` |
 | [openai/whisper](https://github.com/openai/whisper) @ `86098128` | MIT | word timings (pip install openai-whisper) |
-| [remotion-dev/skills](https://github.com/remotion-dev/skills) @ `1af7e69a` | no licence file: not redistributed, fetched by setup | skills remotion-* (installed by setup) |
+| [remotion-dev/skills](https://github.com/remotion-dev/skills) @ `1af7e69a` | no licence file in the repo; included as published, refreshed by setup | skills remotion-* |
 | [showheyohtaki/motion-prompt](https://github.com/showheyohtaki/motion-prompt) @ `7819d387` | MIT | skill motion-prompt (cloned by setup) |
 | [tuzhechen2005/opus-video-skills](https://github.com/tuzhechen2005/opus-video-skills) @ `59744a69` | MIT | skills kinetic-reel, painted-animation, `demos/kinetic`, `demos/painted` |
 | [zhuyansen/awesome-claude-video-skills](https://github.com/zhuyansen/awesome-claude-video-skills) @ `84d86811` | CC0-1.0 | reference list |

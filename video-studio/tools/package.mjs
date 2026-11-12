@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Build the shareable "video-studio-kit" folder from this build folder (re-runnable; the target is replaced each time,
 // except its .git). Leaves out: node_modules, Python venvs, model weights, renders, the user's own projects and episodes,
-// logs, and Remotion's skills (no licence file in their repo: setup fetches them).
+// logs.
 //   node video-studio/tools/package.mjs [targetDir]
 import fs from 'node:fs';
 import path from 'node:path';
@@ -37,7 +37,7 @@ copy(VS, path.join(OUT, 'video-studio'), {
 });
 
 // 2. skills: everything except Remotion's (no licence file in its repo: setup fetches them) and the unlicensed kit
-const NO_SHIP = (n) => n.startsWith('remotion-') && n !== 'remotion-to-hyperframes';
+const NO_SHIP = () => false; // every skill ships (Remotion's included, by the owner's decision)
 for (const n of fs.readdirSync(path.join(BUILD, '.claude', 'skills'))) if (!NO_SHIP(n)) copy(path.join(BUILD, '.claude', 'skills', n), path.join(OUT, '.claude', 'skills', n));
 
 // 3. tvhead studio (Kokoro patch included; models downloaded by setup); only the fire example episodes

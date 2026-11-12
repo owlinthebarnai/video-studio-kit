@@ -15,9 +15,6 @@ studio/episodes/*/build/
 .env*
 *.log
 .DS_Store
-# installed by setup.mjs from remotion-dev/skills (not redistributed here)
-.claude/skills/remotion-*/
-!.claude/skills/remotion-to-hyperframes/
 # created by setup / test runs
 demos/hyperframes-fire/package-lock.json
 **/stills/

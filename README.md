@@ -33,7 +33,7 @@ node setup.mjs          # add --all to also fetch every optional source repo
 The setup script does the following:
 1. Checks the requirements.
 2. Clones the third-party repos it needs at pinned versions.
-3. Installs the Remotion skills from their own repo.
+3. Refreshes the Remotion skills from their own repo.
 4. Installs the Node dependencies and a headless browser.
 5. Downloads the Kokoro voice (about 340 MB).
 
@@ -102,4 +102,4 @@ Built on: [Claude Code](https://claude.com/claude-code), [Remotion](https://www.
 
 ## Licences
 
-Third-party code keeps its own licence; see [THIRD_PARTY.md](THIRD_PARTY.md). Remotion's skills are downloaded from their repo at setup and not redistributed here.
+Third-party code keeps its own licence; see [THIRD_PARTY.md](THIRD_PARTY.md). Remotion's skills are included as published in [remotion-dev/skills](https://github.com/remotion-dev/skills) (that repo has no licence file); Remotion itself has its own licence: https://www.remotion.dev/docs/license
