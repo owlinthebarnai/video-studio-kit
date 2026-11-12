@@ -134,3 +134,8 @@ table.scenes { width: 100%; border-collapse: collapse; min-width: 1100px; }
 .modal-path code { background: #f3eee4; padding: 4px 8px; border-radius: 6px; color: var(--ink); font-size: 12px; word-break: break-all; flex: 1; }
 .modal-actions { display: flex; justify-content: flex-end; gap: 10px; }
 .ghost.small { padding: 3px 9px; font-size: 12px; }
+.new-video { margin-left: auto; white-space: nowrap; }
+#projectStyle { max-width: 230px; }
+.brand { min-width: 0; }
+.brand select { max-width: none; flex: 1; min-width: 0; text-overflow: ellipsis; overflow: hidden; }
+.new-video { flex: none; }

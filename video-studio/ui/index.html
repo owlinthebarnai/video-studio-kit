@@ -12,6 +12,7 @@
     <div class="brand">
       <span class="spark">✳</span>
       <select id="projectPick" title="Your videos"></select>
+      <button id="newVideo" class="ghost small new-video" title="Start a new video">+ New video</button>
     </div>
     <form id="promptForm" class="prompt card">
       <div class="prompt-style">Style for the video: <b id="promptStyle">pick one below</b></div>
@@ -58,6 +59,7 @@
         <header class="proj-head">
           <input id="title" class="title-input" placeholder="Project title">
           <div class="proj-meta">
+            <select id="projectStyle" title="Style for the whole video"></select>
             <select id="format"><option>9:16</option><option>16:9</option><option>1:1</option></select>
             <select id="voice">
               <option value="none">No voice-over</option>

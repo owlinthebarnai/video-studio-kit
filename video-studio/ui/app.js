@@ -77,6 +77,14 @@ $('#promptForm').onsubmit = async (e) => {
 $('#prompt').addEventListener('keydown', (e) => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) $('#promptForm').requestSubmit(); });
 
 // ---------- project ----------
+$('#newVideo').onclick = async () => {
+  if (dirty) await save();
+  P = null; slug = null; dirty = false; lastStatus = null;
+  history.replaceState(null, '', location.pathname);
+  $('#prompt').value = ''; $('#finalModal').hidden = true; document.title = 'Video Studio';
+  await loadProjects(); renderProject();
+  $('#main').scrollTo({ top: 0, behavior: 'smooth' }); $('#prompt').focus();
+};
 async function loadProjects() {
   const list = await api('/api/projects'), pick = $('#projectPick');
   pick.innerHTML = '<option value="">Video Studio · new video</option>' + list.map((p) => `<option value="${p.slug}">${esc(p.title || p.slug)}</option>`).join('');
@@ -120,11 +128,21 @@ function updateTotal() {
   const words = P.scenes.map((s) => s.narration || '').join(' ').split(/\s+/).filter(Boolean).length;
   $('#total').textContent = `${P.scenes.length} scenes · ${end.toFixed(1)} s · ${words} words of narration`;
 }
+function styleNameOf(v) { const [t, s] = String(v || '').split('/'); const tool = toolById(t); const st = tool?.styles.find((x) => x.id === s); return st ? (st.name === tool.name ? tool.name : `${st.name} (${tool.name})`) : v; }
+$('#projectStyle').onchange = () => {
+  const v = $('#projectStyle').value; if (!P || !v) return;
+  P.style = v; P.styleName = styleNameOf(v); P.scenes.forEach((s) => (s.tool = v));
+  const [t, s] = v.split('/'); select(t, s);
+  renderScenes(); renderProject(); touch();
+};
 function renderProject() {
   $('#empty').hidden = !!P; $('#proj').hidden = !P;
   if (!P) return;
   $('#title').value = P.title || ''; $('#format').value = P.format || '9:16'; $('#voice').value = P.voice?.on === true ? P.voice.voice : 'none'; $('#music').value = P.music && P.music !== 'auto' ? P.music : 'lofi';
   $('#ideaLine').textContent = (P.styleName ? 'Style: ' + P.styleName + ' · ' : '') + (P.idea ? 'Prompt: ' + P.idea : '');
+  const ps = $('#projectStyle'), cur = P.style || P.scenes.find((s) => s.tool)?.tool || '';
+  ps.innerHTML = toolOptions(cur).replace('— pick —', 'Style: pick one'); ps.value = cur;
+  ps.disabled = ['building', 'writing-script'].includes(P.status);
   renderScenes(); renderLive();
 }
 const STATUS = { 'writing-script': 'writing script…', 'script-ready': 'script ready: edit & validate', ready: 'script ready: edit & validate', draft: 'draft', 'build-requested': 'waiting for Claude', building: 'generating video…', done: 'done', error: 'error' };
@@ -166,7 +184,7 @@ function touch() { dirty = true; $('#saveState').textContent = 'saving…'; clea
 async function save() {
   if (!P) return;
   clearTimeout(saveTimer);
-  P = await api('/api/project/' + P.slug, { method: 'PUT', body: JSON.stringify({ title: P.title, format: P.format, voice: P.voice, music: P.music, scenes: P.scenes }) });
+  P = await api('/api/project/' + P.slug, { method: 'PUT', body: JSON.stringify({ title: P.title, format: P.format, voice: P.voice, music: P.music, scenes: P.scenes, style: P.style, styleName: P.styleName }) });
   dirty = false; $('#saveState').textContent = 'saved'; renderLive();
 }
 $('#title').oninput = () => { P.title = $('#title').value; touch(); };

@@ -90,7 +90,8 @@ async function handle(req, res) {
     }
     if (!action && req.method === 'PUT') {
       const b = await body(req);
-      for (const k of ['title', 'idea', 'format', 'voice', 'music', 'scenes']) if (b[k] !== undefined) cur[k] = b[k];
+      for (const k of ['title', 'idea', 'format', 'voice', 'music', 'scenes', 'style', 'styleName']) if (b[k] !== undefined) cur[k] = b[k];
+      if (cur.status === 'done' && b.scenes !== undefined) cur.status = 'script-ready'; // edited after finishing: ready to generate again
       if (cur.status === 'draft' && cur.scenes.length) cur.status = 'script-ready';
       return json(res, 200, save(cur));
     }

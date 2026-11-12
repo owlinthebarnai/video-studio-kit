@@ -5,6 +5,11 @@
     "commit": "2e4b0bc294694b1570d76ed01be657c22e6d02a0"
   },
   {
+    "dir": "alchaincyf_huashu-art-motion",
+    "url": "https://github.com/alchaincyf/huashu-art-motion.git",
+    "commit": "1468196505a51728686db118d52561aa27a25124"
+  },
+  {
     "dir": "angrypenguinpng_blender-claymation-skill",
     "url": "https://github.com/angrypenguinpng/blender-claymation-skill.git",
     "commit": "0be7cc00f7c5dd80b50fab53f88d6527102ccc9c"
