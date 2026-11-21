@@ -1,4 +1,4 @@
-// Job store shared by the app server and the Claude bridge. A job IS an episode folder with a job.json next to story.json:
+// Job store shared by the app server and the agent bridge. A job IS an episode folder with a job.json next to story.json:
 //   episodes/<id>/job.json   { id, status, createdAt, updatedAt, brief, history:[{t,status,msg}], progress, outputs, error }
 //   episodes/<id>/brief.json the user's brief (topic, languages, format, duration, theme, voices, notes, refs, autoRender, captions, engine)
 //   episodes/<id>/refs/*     uploaded reference images
@@ -10,7 +10,7 @@ import path from 'node:path';
 export const STUDIO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 export const EPISODES = path.join(STUDIO, 'episodes');
 export const APP_STATE = path.join(STUDIO, '.app.json');          // written by the running server: { pid, port, url, startedAt }
-export const HEARTBEAT = path.join(STUDIO, '.claude-heartbeat');  // touched by `bridge.mjs wait` while a Claude session listens
+export const HEARTBEAT = path.join(STUDIO, '.agent-heartbeat');   // touched by `bridge.mjs wait` while an agent session listens
 export const STATUSES = ['brief', 'storyboarding', 'storyboard', 'revise', 'rendering', 'done', 'error'];
 
 export function writeJson(file, obj) { const tmp = file + '.tmp'; writeFileSync(tmp, JSON.stringify(obj, null, 2)); renameSync(tmp, file); }
@@ -61,7 +61,7 @@ export function createJob(brief, refs = []) {
   return job;
 }
 
-export function claudeWatching() {
+export function agentWatching() {
   try { return Date.now() - statSync(HEARTBEAT).mtimeMs < 25000; } catch { return false; }
 }
 export function appState() {

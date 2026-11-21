@@ -1,11 +1,12 @@
-// Fire-story previews for cartoon-3d-short, blender-3d and story-video-studio, made by Claude Code headless
-// (your subscription), one after another (memory is tight on this PC). Each writes examples/<tool>--fire.mp4 in the
+// Fire-story previews for cartoon-3d-short, blender-3d and story-video-studio, made by an agent CLI headless,
+// one after another (memory is tight on this PC). Each writes examples/<tool>--fire.mp4 in the
 // tool's OWN native format (never cropped), checks a contact sheet, and logs a summary to examples/fire-tools.log.
 //   node tools/fire-tools.mjs [cartoon3d] [blender3d] [story-video]
+// Which CLI: VS_AGENT env (claude|devin|gemini|codex), else the first installed — see ../agent-cli.mjs.
 import fs from 'node:fs';
 import path from 'node:path';
-import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { pick, modelFor, runAgent } from '../agent-cli.mjs';
 
 const VS = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const BUILD = path.resolve(VS, '..');
@@ -58,23 +59,21 @@ Render with node "${f(VS, 'tools/page-render.mjs')}" <dir> --stills 0.5,2.5,4.5 
 ${COMMON(f(VS, 'examples/exploded-product--fire.mp4'))}`,
 };
 
-function run(id) {
-  return new Promise((resolve) => {
-    const t0 = Date.now();
-    const child = spawn('claude', ['-p', '--model', 'opus', '--output-format', 'json', '--tools', 'Bash,Read,Write,Edit,Glob,Grep', '--allowedTools', 'Bash,Read,Write,Edit,Glob,Grep',
-      '--add-dir', BUILD, '--no-session-persistence', '--strict-mcp-config', '--mcp-config', empty, '--setting-sources', '', '--disable-slash-commands'],
-      { cwd: BUILD, windowsHide: true, env: { ...process.env, HYPERFRAMES_NO_TELEMETRY: '1', DO_NOT_TRACK: '1', PYTHONUTF8: '1' } });
-    let out = '', err = '';
-    child.stdout.on('data', (d) => (out += d)); child.stderr.on('data', (d) => (err += d));
-    child.stdin.end(TASKS[id]());
-    child.on('close', () => {
-      const file = path.join(VS, 'examples', { cartoon3d: 'cartoon-3d-short--fire', blender3d: 'blender-3d--fire', 'blender3d-hq': 'blender-3d--fire', 'story-video': 'story-video-studio--fire', 'motion-reel': 'motion-studio--reel', 'exploded-lighter': 'exploded-product--fire' }[id] + '.mp4');
-      let r = {}; try { r = JSON.parse(out.trim()); } catch {}
-      const ok = fs.existsSync(file) && fs.statSync(file).mtimeMs > t0;
-      const line = `${id} ${ok ? 'OK' : 'FAIL'} ${((Date.now() - t0) / 60000).toFixed(1)} min, ${r.num_turns ?? '?'} turns | ${String(r.result ?? err).replace(/\s+/g, ' ').slice(0, 220)}`;
-      fs.appendFileSync(LOG, line + '\n'); console.log(line); resolve();
-    });
+const AGENT = pick();
+if (!AGENT) { console.error('No agent CLI found — install one of: claude, devin, gemini, codex'); process.exit(1); }
+const tail = (r) => (r.stderr || r.stdout || '').trim().split('\n').filter(Boolean).pop() || '';
+
+async function run(id) {
+  const t0 = Date.now();
+  const { done } = runAgent(AGENT, {
+    prompt: TASKS[id](), model: modelFor(AGENT.id, 'build'), cwd: BUILD, addDir: BUILD,
+    emptyMcp: empty, env: { ...process.env, HYPERFRAMES_NO_TELEMETRY: '1', DO_NOT_TRACK: '1', PYTHONUTF8: '1' },
   });
+  const r = await done;
+  const file = path.join(VS, 'examples', { cartoon3d: 'cartoon-3d-short--fire', blender3d: 'blender-3d--fire', 'blender3d-hq': 'blender-3d--fire', 'story-video': 'story-video-studio--fire', 'motion-reel': 'motion-studio--reel', 'exploded-lighter': 'exploded-product--fire' }[id] + '.mp4');
+  const ok = fs.existsSync(file) && fs.statSync(file).mtimeMs > t0;
+  const line = `${id} ${ok ? 'OK' : 'FAIL'} ${((Date.now() - t0) / 60000).toFixed(1)} min, ${r.result?.num_turns ?? '?'} turns | ${String(r.result?.result ?? tail(r)).replace(/\s+/g, ' ').slice(0, 220)}`;
+  fs.appendFileSync(LOG, line + '\n'); console.log(line);
 }
 const ids = process.argv.slice(2).length ? process.argv.slice(2) : Object.keys(TASKS);
 for (const id of ids) await run(id);

@@ -1,10 +1,10 @@
 #!/usr/bin/env node
-// Claude ↔ app bridge. Works on the job files directly (the server does not have to be running for most commands).
-//   node app/bridge.mjs status                 is the app running? key? jobs waiting for Claude
+// Agent ↔ app bridge. Works on the job files directly (the server does not have to be running for most commands).
+//   node app/bridge.mjs status                 is the app running? key? jobs waiting for the agent
 //   node app/bridge.mjs wait [--timeout 1800]  block until a brief/revision is waiting, print it as JSON, exit 0 (exit 2 on timeout).
-//                                              While waiting it keeps .claude-heartbeat fresh → the app header shows "Claude на связи".
+//                                              While waiting it keeps .agent-heartbeat fresh → the app header shows "Агент на связи".
 //   node app/bridge.mjs show <id>              job + brief + feedback + absolute paths of reference images
-//   node app/bridge.mjs claim <id>             mark "Claude is writing the storyboard"
+//   node app/bridge.mjs claim <id>             mark "the agent is writing the storyboard"
 //   node app/bridge.mjs storyboard <id>        validate story.json, render the storyboard stills, hand it to the user for review
 //                                              (or straight to render when the brief has autoRender)
 //   node app/bridge.mjs render <id>            start the final render (through the app if it runs, else directly)
@@ -12,7 +12,7 @@
 import { spawnSync, spawn } from 'node:child_process';
 import { existsSync, writeFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
-import { STUDIO, HEARTBEAT, getJob, setStatus, listJobs, appState, claudeWatching, jobDir, readJson } from './jobs.mjs';
+import { STUDIO, HEARTBEAT, getJob, setStatus, listJobs, appState, agentWatching, jobDir, readJson } from './jobs.mjs';
 import { storyLanguages } from '../lib/story.mjs';
 
 const [cmd, id, ...rest] = process.argv.slice(2);
@@ -46,7 +46,7 @@ switch (cmd) {
   case 'status': {
     const s = appState(), st = s ? await api('/api/status') : null;
     out({ app: s ? { running: true, url: s.url, since: s.startedAt } : { running: false, start: 'node app/server.mjs --open  (or start-app.cmd / start-app.sh)' },
-      tts: st?.tts ?? null, claudeListening: claudeWatching(),
+      tts: st?.tts ?? null, agentListening: agentWatching(),
       waiting: pending().map(j => ({ id: j.id, status: j.status, topic: j.brief?.topic, languages: j.brief?.languages })),
       recent: listJobs().slice(0, 6).map(j => ({ id: j.id, status: j.status, topic: j.brief?.topic })) });
     break;
@@ -62,7 +62,7 @@ switch (cmd) {
     }
   }
   case 'show': out(details(need())); break;
-  case 'claim': { const j = need(); setStatus(j.id, 'storyboarding', 'Claude пишет раскадровку'); beat(); console.log(`claimed ${j.id} → write ${path.join(jobDir(j.id), 'story.json')}`); break; }
+  case 'claim': { const j = need(); setStatus(j.id, 'storyboarding', 'Агент пишет раскадровку'); beat(); console.log(`claimed ${j.id} → write ${path.join(jobDir(j.id), 'story.json')}`); break; }
   case 'storyboard': {
     const j = need(), file = path.join(jobDir(j.id), 'story.json');
     const story = readJson(file); if (!story) die(`${file} missing or not valid JSON`);
@@ -94,7 +94,7 @@ switch (cmd) {
     const j = need();
     const viaApp = await api(`/api/jobs/${j.id}/approve`, 'POST');
     if (viaApp) { console.log(`rendering in the app: ${appState().url}`); break; }
-    setStatus(j.id, 'rendering', 'Рендер запущен из Claude');
+    setStatus(j.id, 'rendering', 'Рендер запущен агентом');
     const r = spawnSync(process.execPath, [path.join(STUDIO, 'make.mjs'), j.id], { cwd: STUDIO, stdio: 'inherit' });
     setStatus(j.id, r.status === 0 ? 'done' : 'error', r.status === 0 ? 'Видео готово' : 'Рендер упал');
     break;

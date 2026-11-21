@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Stitch a Video Studio project: clips (one per scene) → fitted to each scene's length and the format → narration per
-// scene (Kokoro, local) placed at the scene's start → optional generated music under it → final.mp4 at -14 LUFS.
+// scene (Kokoro local or Edge neural voices, both free) placed at the scene's start → optional generated music under it → final.mp4 at -14 LUFS.
 //   node tools/stitch.mjs <slug> [--music lofi|ambient|upbeat|epic|none] [--no-voice]
 import fs from 'node:fs';
 import path from 'node:path';
@@ -41,17 +41,19 @@ const list = path.join(work, 'list.txt'); fs.writeFileSync(list, parts.map((p) =
 const video = path.join(work, 'video.mp4'); ff(['-f', 'concat', '-safe', '0', '-i', list, '-c', 'copy', video]);
 const total = dur(video);
 
-// 2. narration: one Kokoro line per scene, placed at the scene's start
+// 2. narration: one TTS line per scene, placed at the scene's start
 const voiceName = P.voice?.voice || 'am_michael';
+const voiceEngine = P.voice?.engine || 'kokoro';
 // voice-over is opt-in: only when the user picked a voice in the studio (voice.on === true)
 const useVoice = !process.argv.includes('--no-voice') && P.voice?.on === true && voiceName !== 'none';
 const tts = path.join(BUILD, 'studio', 'tts');
 const py = path.join(tts, '.venv', process.platform === 'win32' ? 'Scripts/python.exe' : 'bin/python');
+const speakScript = voiceEngine === 'edge' ? 'speak_edge.py' : 'speak.py';
 const lines = [];
 if (useVoice) for (const s of P.scenes) {
   const text = (s.narration || '').trim(); if (!text) continue;
   const f = path.join(work, `vo-${String(s.n).padStart(2, '0')}.mp3`);
-  const r = spawnSync(py, [path.join(tts, 'speak.py'), f, voiceName, '1.0'], { input: text, encoding: 'utf8' });
+  const r = spawnSync(py, [path.join(tts, speakScript), f, voiceName, '1.0'], { input: text, encoding: 'utf8' });
   if (r.status !== 0 || !fs.existsSync(f)) { console.warn(`scene ${s.n}: voice failed ${r.stderr?.slice(-300)}`); continue; }
   const d = dur(f), room = s.end - s.start;
   if (d > room + 0.05) console.warn(`scene ${s.n}: narration is ${d.toFixed(1)} s for a ${room.toFixed(1)} s scene (it will run over)`);

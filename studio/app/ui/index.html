@@ -13,7 +13,7 @@
     <button type="button" data-view="library"><span data-i18n="tab.library">Cast &amp; world</span> <span class="count" id="libCount"></span></button>
   </nav>
   <div class="pills">
-    <span class="pill" id="pillClaude" data-i18n-title="pill.claude.title">Claude: …</span>
+    <span class="pill" id="pillAgent" data-i18n-title="pill.agent.title">agent: …</span>
     <span class="pill" id="pillTts">…</span>
     <div class="seg uilang" role="radiogroup" id="uiLang" data-i18n-aria="ui.aria">
       <button type="button" role="radio" data-ui="ru" aria-checked="false">RU</button>
@@ -92,7 +92,7 @@
       <label class="field"><span data-i18n="notes">Notes</span>
         <textarea name="notes" rows="2" data-i18n-ph="notes.ph"></textarea></label>
 
-      <button class="btn primary big" type="submit" id="sendBtn" data-i18n="send">Send to Claude</button>
+      <button class="btn primary big" type="submit" id="sendBtn" data-i18n="send">Send to the agent</button>
       <p class="formmsg" id="formMsg" role="status"></p>
     </form>
   </section>
@@ -151,7 +151,7 @@
     </div>
     <div class="libgrid" id="libGrid"></div>
     <details class="card catalog">
-      <summary data-i18n="cat.summary">What Claude builds characters and places from</summary>
+      <summary data-i18n="cat.summary">What the agent builds characters and places from</summary>
       <div id="catalog"></div>
       <p class="hint" data-i18n="cat.hint"></p>
     </details>

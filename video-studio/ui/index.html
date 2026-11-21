@@ -15,7 +15,9 @@
       <button id="newVideo" class="ghost small new-video" title="Start a new video">+ New video</button>
     </div>
     <form id="promptForm" class="prompt card">
-      <div class="prompt-style">Style for the video: <b id="promptStyle">pick one below</b></div>
+      <div class="prompt-style">Style for the video: <b id="promptStyle">pick one below</b>
+        <label class="aswitch" title="The agent reads your idea and recommends styles to pick from"><input type="checkbox" id="suggestStyle"><span class="knob"></span>suggest</label>
+      </div>
       <textarea id="prompt" placeholder="Describe the video you want… e.g. A 30-second story about a cat who learns to fly, in comic style"></textarea>
       <div class="prompt-bar">
         <select id="newFormat" title="Format"><option value="9:16">9:16</option><option value="16:9">16:9</option><option value="1:1">1:1</option></select>
@@ -50,10 +52,15 @@
       <div id="toolInfo" class="toolinfo"></div>
     </section>
 
+    <section class="suggest card" id="suggestPanel" hidden>
+      <header class="suggest-head"><h2>The agent suggests</h2><button id="suggestDismiss" class="ghost small">Pick my own style</button></header>
+      <div class="suggest-grid" id="suggestGrid"></div>
+    </section>
+
     <section class="project card" id="project">
       <div id="empty" class="empty">
         <h2>Write a prompt to start</h2>
-        <p>Describe your video in the box on the left. Claude writes the script, scene by scene and second by second, using the styles you see here. You edit it, validate it, and the video gets made.</p>
+        <p>Describe your video in the box on the left. The agent writes the script, scene by scene and second by second, using the styles you see here. You edit it, validate it, and the video gets made.</p>
       </div>
       <div id="proj" hidden>
         <header class="proj-head">
@@ -63,8 +70,16 @@
             <select id="format"><option>9:16</option><option>16:9</option><option>1:1</option></select>
             <select id="voice">
               <option value="none">No voice-over</option>
-              <option value="am_michael">Voice-over: Michael</option><option value="am_adam">Voice-over: Adam</option>
-              <option value="bm_george">Voice-over: George (UK)</option><option value="am_onyx">Voice-over: Onyx</option>
+              <optgroup label="English (Kokoro)">
+                <option value="am_michael">Voice-over: Michael</option><option value="am_adam">Voice-over: Adam</option>
+                <option value="bm_george">Voice-over: George (UK)</option><option value="am_onyx">Voice-over: Onyx</option>
+              </optgroup>
+              <optgroup label="English (neural)">
+                <option value="edge:en-US-AriaNeural">Voice-over: Aria</option><option value="edge:en-GB-RyanNeural">Voice-over: Ryan (UK)</option>
+              </optgroup>
+              <optgroup label="Tiếng Việt (neural)">
+                <option value="edge:vi-VN-HoaiMyNeural">Giọng đọc: Hoài My (nữ)</option><option value="edge:vi-VN-NamMinhNeural">Giọng đọc: Nam Minh (nam)</option>
+              </optgroup>
             </select>
             <select id="music">
               <option value="lofi">Music: lo-fi</option><option value="ambient">Music: ambient</option><option value="upbeat">Music: upbeat</option><option value="epic">Music: epic</option><option value="none">No music</option>
@@ -74,7 +89,7 @@
         </header>
         <p id="ideaLine" class="idea-line"></p>
 
-        <div id="writing" class="writing" hidden><span class="dot"></span> Claude is writing the script…</div>
+        <div id="writing" class="writing" hidden><span class="dot"></span> The agent is writing the script…</div>
 
         <div id="scriptBlock">
           <div class="scenes-head">
@@ -84,7 +99,7 @@
           </div>
           <div class="table-wrap">
             <table class="scenes">
-              <thead><tr><th>#</th><th>Time (s)</th><th>Style</th><th>What we see</th><th>Narration</th><th>On-screen text</th><th>Sound</th><th>Notes for Claude</th><th></th></tr></thead>
+              <thead><tr><th>#</th><th>Time (s)</th><th>Style</th><th>What we see</th><th>Narration</th><th>On-screen text</th><th>Sound</th><th>Notes for the agent</th><th></th></tr></thead>
               <tbody id="sceneRows"></tbody>
             </table>
           </div>

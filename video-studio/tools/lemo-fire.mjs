@@ -1,11 +1,13 @@
-// Fire version of lemo-opuscar styles: Claude Code (headless, your subscription) writes a 5 s "discovery of fire" film in
+// Fire version of lemo-opuscar styles: an agent CLI (headless) writes a 5 s "discovery of fire" film in
 // each style's own technique, checks stills, then renders the 5 s preview into examples/lemo-opuscar--<style>.mp4.
 //   node tools/lemo-fire.mjs ukiyoe art-deco ascii-crt [--model opus]
+// Which CLI: VS_AGENT env (claude|devin|gemini|codex), else the first installed — see ../agent-cli.mjs.
+// --model overrides the model for claude only; other CLIs use their adapter defaults.
 // Writes a summary line per style (minutes, cost-equivalent, turns) to examples/lemo-fire.log.
 import fs from 'node:fs';
 import path from 'node:path';
-import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { pick, modelFor, runAgent } from '../agent-cli.mjs';
 
 const VS = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const LIB = path.resolve(VS, '..', 'repos', 'lemomo-ai_lemo-opuscar');
@@ -24,23 +26,22 @@ const brief = (s) => `You are in the lemo-opuscar library (the current folder). 
 6. Render the preview: node "${fwd(path.join(VS, 'tools', 'lemo-preview.mjs'))}" films/fire-${s} "${fwd(path.join(VS, 'examples', `lemo-opuscar--${s}.mp4`))}" --at 0
 Do not modify anything under styles/ or core/. Do not ask questions. End with one line: what you made.`;
 
-function run(s) {
-  return new Promise((resolve) => {
-    const t0 = Date.now();
-    const child = spawn('claude', ['-p', '--model', MODEL, '--output-format', 'json', '--tools', 'Bash,Read,Write,Edit,Glob,Grep', '--allowedTools', 'Bash,Read,Write,Edit,Glob,Grep',
-      '--no-session-persistence', '--strict-mcp-config', '--mcp-config', empty, '--setting-sources', '', '--disable-slash-commands'],
-      { cwd: LIB, windowsHide: true, env: { ...process.env, LEMO_OPUSCAR_HOME: LIB, PYTHONUTF8: '1' } });
-    let out = '', err = '';
-    child.stdout.on('data', (d) => (out += d)); child.stderr.on('data', (d) => (err += d));
-    child.stdin.end(brief(s));
-    child.on('close', () => {
-      const min = ((Date.now() - t0) / 60000).toFixed(1);
-      let r = {}; try { r = JSON.parse(out.trim()); } catch {}
-      const ok = fs.existsSync(path.join(VS, 'examples', `lemo-opuscar--${s}.mp4`)) && fs.statSync(path.join(VS, 'examples', `lemo-opuscar--${s}.mp4`)).mtimeMs > t0;
-      const line = `${s} ${ok ? 'OK' : 'FAIL'} ${min} min, ~$${(r.total_cost_usd ?? 0).toFixed(2)} equiv, ${r.num_turns ?? '?'} turns | ${String(r.result ?? err).replace(/\s+/g, ' ').slice(0, 200)}`;
-      fs.appendFileSync(LOG, line + '\n'); console.log(line); resolve();
-    });
+const AGENT = pick();
+if (!AGENT) { console.error('No agent CLI found — install one of: claude, devin, gemini, codex'); process.exit(1); }
+const tail = (r) => (r.stderr || r.stdout || '').trim().split('\n').filter(Boolean).pop() || '';
+const model = mi >= 0 && AGENT.id === 'claude' ? MODEL : modelFor(AGENT.id, 'build');
+
+async function run(s) {
+  const t0 = Date.now();
+  const { done } = runAgent(AGENT, {
+    prompt: brief(s), model, cwd: LIB, emptyMcp: empty,
+    env: { ...process.env, LEMO_OPUSCAR_HOME: LIB, PYTHONUTF8: '1' },
   });
+  const r = await done;
+  const min = ((Date.now() - t0) / 60000).toFixed(1);
+  const ok = fs.existsSync(path.join(VS, 'examples', `lemo-opuscar--${s}.mp4`)) && fs.statSync(path.join(VS, 'examples', `lemo-opuscar--${s}.mp4`)).mtimeMs > t0;
+  const line = `${s} ${ok ? 'OK' : 'FAIL'} ${min} min, ~$${(r.result?.total_cost_usd ?? 0).toFixed(2)} equiv, ${r.result?.num_turns ?? '?'} turns | ${String(r.result?.result ?? tail(r)).replace(/\s+/g, ' ').slice(0, 200)}`;
+  fs.appendFileSync(LOG, line + '\n'); console.log(line);
 }
 for (const s of args) await run(s);
 console.log('PILOT DONE');

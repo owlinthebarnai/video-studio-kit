@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Video Studio kit — one-time setup.   node setup.mjs [--all] [--skip-voice]
-//   1. checks the tools you need (Node 20+, git, ffmpeg, Python 3.10+, Claude Code logged in; Blender optional)
+//   1. checks the tools you need (Node 20+, git, ffmpeg, Python 3.10+, an agent CLI logged in; Blender optional)
 //   2. clones the third-party repos it needs at the pinned commits in repos.json (--all: every repo, incl. optional ones)
 //   3. installs the Remotion skills from their own repo, applies our additions (overlays/)
 //   4. npm installs the studio, the demos and lemo-opuscar, and the headless browser the renderers use
@@ -10,14 +10,15 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { pick } from './video-studio/agent-cli.mjs';
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const ALL = process.argv.includes('--all'), SKIP_VOICE = process.argv.includes('--skip-voice');
 const WIN = process.platform === 'win32';
 const say = (s) => console.log(`\n\x1b[1m${s}\x1b[0m`);
 const ok = (s) => console.log(`  \x1b[32m✓\x1b[0m ${s}`), warn = (s) => console.log(`  \x1b[33m!\x1b[0m ${s}`), bad = (s) => console.log(`  \x1b[31m✗\x1b[0m ${s}`);
-// npm/npx/claude are .cmd shims on Windows and need a shell; everything else runs without one (paths with spaces stay intact)
-const SHELL = new Set(['npm', 'npx', 'claude']);
+// npm/npx and npm-installed agent CLIs are .cmd shims on Windows and need a shell; everything else runs without one (paths with spaces stay intact)
+const SHELL = new Set(['npm', 'npx', 'claude', 'devin', 'gemini', 'codex']);
 const run = (cmd, args, opts = {}) => spawnSync(cmd, args, { stdio: 'inherit', shell: WIN && SHELL.has(cmd), ...opts });
 const out = (cmd, args) => { const r = spawnSync(cmd, args, { encoding: 'utf8', shell: WIN && SHELL.has(cmd) }); return r.status === 0 ? (r.stdout || r.stderr || '').trim() : null; };
 
@@ -29,9 +30,18 @@ out('git', ['--version']) ? ok('git') : (bad('git not found: https://git-scm.com
 out('ffmpeg', ['-version']) ? ok('ffmpeg') : (bad('ffmpeg not found on PATH: https://ffmpeg.org/download.html (Windows: winget install Gyan.FFmpeg)'), missing++);
 const PY = ['python', 'python3', 'py'].find((p) => /Python 3\.(1\d|[2-9]\d)/.test(out(p, ['--version']) || ''));
 PY ? ok(`Python (${out(PY, ['--version'])})`) : (bad('Python 3.10+ not found: https://www.python.org'), missing++);
-const claude = out('claude', ['--version']);
-if (!claude) { bad('Claude Code not found: https://claude.com/claude-code (then run `claude` once and log in with your Claude account)'); missing++; }
-else { const st = out('claude', ['auth', 'status']) || ''; /"loggedIn":\s*true/.test(st) ? ok(`Claude Code ${claude.split(' ')[0]} (logged in)`) : warn(`Claude Code ${claude.split(' ')[0]}: run \`claude\` once and log in with your subscription`); }
+// Any one of these agent CLIs writes the scripts and builds the videos. VS_AGENT picks which;
+// without it the first installed wins (order in video-studio/agent-cli.mjs).
+const AGENTS = { claude: 'Claude Code', devin: 'Devin', gemini: 'Gemini CLI', codex: 'Codex' };
+const agentLogin = (id) => {
+  if (id === 'claude') return /"loggedIn":\s*true/.test(out('claude', ['auth', 'status']) || '');
+  if (id === 'devin') return /logged in/i.test(out('devin', ['auth', 'status']) || '');
+  if (id === 'codex') return /logged in/i.test(out('codex', ['login', 'status']) || '');
+  return null; // gemini: auth is configured on first run or via env vars
+};
+const agents = Object.keys(AGENTS).filter((b) => out(b, ['--version']));
+if (!agents.length) { bad('No agent CLI found: install Claude Code (https://claude.com/claude-code), Devin (https://devin.ai), Gemini CLI or Codex, and log in'); missing++; }
+else for (const a of agents) { const s = agentLogin(a); s === false ? warn(`${AGENTS[a]}: run it once and log in`) : ok(`${AGENTS[a]}${s ? ' (logged in)' : ''}`); }
 const blender = process.env.BLENDER || (WIN ? ['5.3', '5.2', '5.1', '5.0', '4.5', '4.4', '4.3', '4.2'].map((v) => `C:/Program Files/Blender Foundation/Blender ${v}/blender.exe`).find((p) => fs.existsSync(p)) : (out('which', ['blender']) || (fs.existsSync('/Applications/Blender.app/Contents/MacOS/Blender') ? '/Applications/Blender.app/Contents/MacOS/Blender' : null)));
 blender ? ok(`Blender (${blender}) — set BLENDER to this path for the Blender styles`) : warn('Blender not found (optional: only the Blender clay / 3D styles need it). https://www.blender.org');
 if (missing) { console.log(`\n${missing} requirement(s) missing: install them and run node setup.mjs again.`); process.exit(1); }
@@ -81,7 +91,7 @@ const tts = path.join(ROOT, 'studio', 'tts'), venvPy = path.join(tts, '.venv', W
 if (SKIP_VOICE) warn('skipped (--skip-voice): voice-over will be unavailable');
 else {
   if (!fs.existsSync(venvPy)) run(PY, ['-m', 'venv', path.join(tts, '.venv')]);
-  run(venvPy, ['-m', 'pip', 'install', '-q', 'kokoro-onnx', 'soundfile', 'espeakng-loader']).status === 0 ? ok('kokoro-onnx installed') : bad('pip install failed');
+  run(venvPy, ['-m', 'pip', 'install', '-q', 'kokoro-onnx', 'soundfile', 'espeakng-loader', 'edge-tts']).status === 0 ? ok('kokoro-onnx + edge-tts installed') : bad('pip install failed');
   const base = 'https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/';
   for (const f of ['kokoro-v1.0.onnx', 'voices-v1.0.bin']) {
     const dst = path.join(tts, f); if (fs.existsSync(dst) && fs.statSync(dst).size > 1e6) { ok(`${f} (already there)`); continue; }
@@ -94,6 +104,7 @@ else {
 }
 
 say('Done.');
+const chosen = pick();
 console.log(`  Start the studio:  ${WIN ? 'double-click "Start Video Studio.cmd"' : 'sh start-studio.sh'}   (or: node video-studio/vs.mjs serve, then http://localhost:4790)
-  Or from Claude Code in this folder:  /video-studio <your idea>
-  Everything runs on your machine with your own Claude subscription (Claude Code). No API keys needed.`);
+  Or from your agent CLI in this folder: ask it to "make a video about …" (the video-studio skill).
+  Agent: ${chosen ? chosen.label : 'none'} — set VS_AGENT=claude|devin|gemini|codex to pick another. Everything runs on your machine; no API keys needed.`);

@@ -1,12 +1,12 @@
 # Video Studio kit
 
-Make short animated videos from a prompt, on your own computer, with your own Claude subscription.
+Make short animated videos from a prompt, on your own computer, with your own AI coding agent (Claude Code, Devin, Gemini CLI or Codex).
 
 **▶ [Watch the 1-minute demo](docs/demo.mp4)**: pick a style, write a prompt, get a script, validate, generate.
 
 You get:
-- **Video Studio**, a local web app. Pick one of 109 styles (93 have a 5-second preview), write a prompt, and Claude writes a timed, scene-by-scene script. Edit it, choose music and an optional voice-over, validate, and Claude Code builds the video.
-- **50+ Claude Code skills** for video: the ten Claude animation styles (pixel art, PS2, comic, brick toy, claymation, paper cutout, retro anime, low poly, risograph, miniature diorama), tvhead stickman explainers, lemo-opuscar's 66 film styles, HyperFrames, Remotion, kinetic type, painted watercolour, cut paper, what-if stick figures, motion-studio anime and reels, cartoon cards in 3D, story-video survival HUD, Blender clay and toon, exploded product views and four science-explainer styles (flat diagram, fluorescence microscopy, 3D molecular, lab notebook).
+- **Video Studio**, a local web app. Pick one of 109 styles (93 have a 5-second preview), write a prompt, and your agent CLI writes a timed, scene-by-scene script. Edit it, choose music and an optional voice-over, validate, and the agent builds the video.
+- **50+ agent skills** for video: the ten Claude animation styles (pixel art, PS2, comic, brick toy, claymation, paper cutout, retro anime, low poly, risograph, miniature diorama), tvhead stickman explainers, lemo-opuscar's 66 film styles, HyperFrames, Remotion, kinetic type, painted watercolour, cut paper, what-if stick figures, motion-studio anime and reels, cartoon cards in 3D, story-video survival HUD, Blender clay and toon, exploded product views and four science-explainer styles (flat diagram, fluorescence microscopy, 3D molecular, lab notebook).
 - A free local voice (Kokoro) and generated music. **No API keys.**
 
 44 of the previews retell the same story, *the discovery of fire*, so you can compare styles side by side. The others show a clip of each style's own demo film.
@@ -15,7 +15,7 @@ You get:
 
 | | |
 |---|---|
-| [Claude Code](https://claude.com/claude-code), logged in with your Claude plan (Pro or Max) | writes the scripts and builds the videos |
+| One agent CLI, logged in: [Claude Code](https://claude.com/claude-code) (Pro or Max), [Devin](https://devin.ai), Gemini CLI or Codex | writes the scripts and builds the videos. Pick one with `VS_AGENT`; otherwise the first installed is used |
 | Node.js 20+ and git | |
 | Python 3.10+ | for the local voice |
 | ffmpeg on your PATH | Windows: `winget install Gyan.FFmpeg` · macOS: `brew install ffmpeg` |
@@ -44,17 +44,17 @@ You can run it again safely.
 ## Use
 
 **In the app.** On Windows, double-click `Start Video Studio.cmd`. On macOS or Linux, run `sh start-studio.sh`. It opens http://localhost:4790.
-1. Pick a style on the left. The viewer plays its example.
+1. Pick a style on the left. The viewer plays its example. Or flip the **suggest** switch by the prompt box: the agent reads your idea, recommends a few styles with a one-line reason each, and you approve one before the script is written.
 2. Write your prompt and press **Write the script**. The whole video uses the style you picked.
 3. Edit the script table: times, what we see, narration, on-screen text, sound, notes.
 4. Choose the voice-over (off by default) and the music.
-5. Press **Validate script & generate video**. Claude Code renders each scene and stitches them. When it finishes, the video opens in a window with **Open folder** and **Save a copy**. Finished videos are also copied to `outputs/`.
+5. Press **Validate script & generate video**. The agent renders each scene and stitches them. When it finishes, the video opens in a window with **Open folder** and **Save a copy**. Finished videos are also copied to `outputs/`.
 
-**In Claude Code.** Open a terminal in this folder, run `claude`, then type `/video-studio a 30-second story about …`.
+**In your agent CLI.** Open a session in this folder and ask for a video: `make a 30-second story about …` (the `video-studio` skill). In Claude Code, `/video-studio a 30-second story about …` works too.
 
-## How it uses your subscription
+## How it uses your agent CLI
 
-Writing a script is one short Claude Code call. Building a video runs Claude Code headless (`claude -p`) in this folder with file and shell tools: it reads the style's skill, writes the scene code, renders and checks frames. That uses your plan's usage like a long conversation does, and depends on the style and length. Nothing is billed separately, and nothing is sent anywhere except to Claude through Claude Code.
+Writing a script is one short agent call. Building a video runs the CLI headless in this folder with file and shell tools: it reads the style's skill, writes the scene code, renders and checks frames. That uses your plan's usage like a long conversation does, and depends on the style and length. Nothing is billed separately, and nothing is sent anywhere except through the agent CLI you chose.
 
 ## Speed (Intel laptop GPU)
 
@@ -68,7 +68,7 @@ Writing a script is one short Claude Code call. Building a video runs Claude Cod
 
 | Folder | What's in it |
 |---|---|
-| `video-studio/` | the app (`vs.mjs` server, `agent.mjs` Claude runner, `ui/`, `catalog.json`, `tools/`, `examples/`) |
+| `video-studio/` | the app (`vs.mjs` server, `agent.mjs` + `agent-cli.mjs` agent runner, `ui/`, `catalog.json`, `tools/`, `examples/`) |
 | `.claude/skills/` | the skills, including `video-studio`, the orchestrator |
 | `studio/` | the tvhead engine, with the Kokoro voice patch |
 | `demos/` | the working setup of each tool that the build recipes start from |

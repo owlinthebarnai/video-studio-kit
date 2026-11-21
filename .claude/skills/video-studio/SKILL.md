@@ -1,12 +1,12 @@
 ---
 name: video-studio
-description: Make a video from an idea with every video tool installed in this build (animation styles, tvhead, animate, painted, kinetic, what-if, HyperFrames, Remotion, Blender clay/3D, motion-studio, lemo-opuscar…). Claude turns the idea into a script and a second-by-second scene table, opens the Video Studio UI where the user edits it and picks a style per scene (each tool has a 5-second example), then builds every scene with the chosen tool and stitches the final MP4 with free local music and, only if the user picks it, a Kokoro voice-over. Use for "/video-studio", "make a video about…", "turn this idea into a video", or when the user presses Build in the Video Studio UI.
+description: Make a video from an idea with every video tool installed in this build (animation styles, tvhead, animate, painted, kinetic, what-if, HyperFrames, Remotion, Blender clay/3D, motion-studio, lemo-opuscar…). The agent turns the idea into a script and a second-by-second scene table, opens the Video Studio UI where the user edits it and picks a style per scene (each tool has a 5-second example), then builds every scene with the chosen tool and stitches the final MP4 with free local music and, only if the user picks it, a Kokoro voice-over. Use for "/video-studio", "make a video about…", "turn this idea into a video", or when the user presses Build in the Video Studio UI.
 ---
 
 # Video Studio
 
 Paths: `BUILD` = the `AI Video generator` folder (this skill lives in `BUILD/.claude/skills/video-studio`). `VS` = `BUILD/video-studio`.
-Everything is free and local: Claude (this session) writes and builds, the repos render, Kokoro speaks only when the user turns the voice-over on (it is off by default).
+Everything is free and local: the agent (this session) writes and builds, the repos render, Kokoro speaks only when the user turns the voice-over on (it is off by default).
 
 ## 1. Open the studio
 - Is the UI already up? `curl -s -o /dev/null -w "%{http_code}" http://localhost:4790/api/catalog`. If not, start it **in the background**: `node "$VS/vs.mjs" serve`.
@@ -32,7 +32,7 @@ For every scene, in order (report each with `node vs.mjs progress <slug> "scene 
 2. Use the tool's working setup in `BUILD/demos/…` (see `catalog.json` → `build`, and the notes below) as the template: copy it to `VS/projects/<slug>/work/<tool>-<n>/`, never edit the demo in place.
 3. Check before moving on: `ffmpeg -i clip -vf "fps=2,scale=200:-2,tile=8x1" -frames:v 1 sheet.jpg`, then Read it. Does it show the scene's `visual`? Any blank frames, zoom flashes, cut-off subjects? Fix once.
 Keep the subject identical across scenes (same character, colours) when it is the same story.
-When all scenes are done: `node "$VS/tools/stitch.mjs" <slug> [--music lofi|ambient|upbeat|epic|none]` → `projects/<slug>/final.mp4`. Watch it as a contact sheet (1 frame per second) and fix real problems, then `node vs.mjs done <slug> final.mp4` and `vs.mjs reply` a 2-line summary (length, tools, anything you couldn't do). Tell the user to listen once: Claude can't hear the mix.
+When all scenes are done: `node "$VS/tools/stitch.mjs" <slug> [--music lofi|ambient|upbeat|epic|none]` → `projects/<slug>/final.mp4`. Watch it as a contact sheet (1 frame per second) and fix real problems, then `node vs.mjs done <slug> final.mp4` and `vs.mjs reply` a 2-line summary (length, tools, anything you couldn't do). Tell the user to listen once: the agent can't hear the mix.
 
 ## Tool notes (learned on this PC: Windows, Intel GPU, user name with "Á")
 - **animation-styles** (`demos/animation-styles`): one beat per scene in `story.json`; new subjects = new draw functions like `lib/fire.js` / `lib/fire3d.js`, used by every style. 3D looks ≈ 2–7 s/frame.

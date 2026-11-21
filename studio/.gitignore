@@ -6,9 +6,11 @@ episodes/*/build/
 app/thumbs/
 .app.json
 .claude-heartbeat
+.agent-heartbeat
 episodes/*/job.json
 episodes/*/make.log
 episodes/*/claude.log
+episodes/*/agent.log
 app/server.log
 library/
 films/*/node_modules/

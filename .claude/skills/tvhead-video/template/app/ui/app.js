@@ -31,15 +31,15 @@ document.querySelectorAll('#uiLang button').forEach(b => b.addEventListener('cli
 async function refreshStatus() {
   try {
     const s = await api('/api/status'); state.status = s; state.defaults = s.defaults || {};
-    const pc = $('#pillClaude'), pt = $('#pillTts');
-    pc.className = 'pill ' + (s.claude.watching ? 'on' : 'off');
-    pc.textContent = t(s.claude.watching ? 'pill.claude.on' : 'pill.claude.off');
+    const pc = $('#pillAgent'), pt = $('#pillTts');
+    pc.className = 'pill ' + (s.agent.watching ? 'on' : 'off');
+    pc.textContent = t(s.agent.watching ? 'pill.agent.on' : 'pill.agent.off');
     pt.className = 'pill ' + (s.tts ? 'on' : 'warn');
     pt.textContent = s.tts ? t('pill.tts.on', { p: s.tts === 'openrouter' ? 'OpenRouter' : 'Fish' }) : t('pill.tts.none');
     pt.title = s.tts ? '' : t('pill.tts.title');
-    $('#cliOpt').hidden = !s.claude.cli;
+    $('#cliOpt').hidden = !s.agent.cli;
     if (!state.voicesBuilt) buildVoices();
-  } catch { $('#pillClaude').textContent = t('pill.server'); $('#pillClaude').className = 'pill off'; }
+  } catch { $('#pillAgent').textContent = t('pill.server'); $('#pillAgent').className = 'pill off'; }
 }
 
 // ─── brief form ─────────────────────────────────────────────────
@@ -140,7 +140,7 @@ form.addEventListener('submit', async e => {
     const job = await api('/api/jobs', { method: 'POST', body });
     state.selected = job.id; LS.set('job', job.id);
     form.topic.value = ''; form.notes.value = ''; form.castIdeas.value = ''; form.worldIdeas.value = ''; state.refs = []; drawRefs(); state.picked.clear(); drawPick();
-    msg(t(body.engine === 'cli' ? 'sent.cli' : state.status?.claude.watching ? 'sent.listening' : 'sent.waiting'));
+    msg(t(body.engine === 'cli' ? 'sent.cli' : state.status?.agent.watching ? 'sent.listening' : 'sent.waiting'));
     await refreshJobs(); await refreshDetail(true);
   } catch (err) { msg(err.message, true); }
   $('#sendBtn').disabled = false;
@@ -187,7 +187,7 @@ async function refreshDetail(force) {
     <ol class="steps">${STEPS.map((k, i) => `<li class="step ${i < step || j.status === 'done' ? 'done' : i === step ? 'now' : ''}">${h(t('step.' + k))}</li>`).join('')}</ol>`;
 
   if (j.status === 'brief' || j.status === 'revise' || j.status === 'storyboarding') {
-    const listening = state.status?.claude.watching, cli = j.brief?.engine === 'cli';
+    const listening = state.status?.agent.watching, cli = j.brief?.engine === 'cli';
     const text = t(j.status === 'storyboarding' ? 'wait.storyboarding' : listening || cli ? (j.status === 'revise' ? 'wait.revise' : 'wait.ack') : 'wait.idle');
     const last = j.history?.length ? j.history[j.history.length - 1] : null;
     html += `<div class="wait">${tvSvg()}<div><b>${h(text)}</b>${last ? `<div class="meta">${h(I18N.en['hist.' + last.status] ? t('hist.' + last.status) : last.msg)}</div>` : ''}</div></div>`;
@@ -250,7 +250,7 @@ function tvSvg() {
   return `<svg class="tv" viewBox="0 0 64 58" aria-hidden="true"><path d="M24 12 18 2M40 12l6-10" stroke="#141414" stroke-width="4" stroke-linecap="round"/><rect x="4" y="12" width="56" height="44" rx="8" fill="#585858" stroke="#141414" stroke-width="4"/><rect class="scr" x="12" y="19" width="40" height="30" rx="5" fill="#e9ebeb" stroke="#141414" stroke-width="3"/><circle cx="25" cy="31" r="3" fill="#141414"/><circle cx="39" cy="31" r="3" fill="#141414"/></svg>`;
 }
 
-// ─── cast & world: what the user asked for, and what Claude designed ─────
+// ─── cast & world: what the user asked for, and what the agent designed ─────
 const kindText = k => I18N.en['kind.' + k] ? t('kind.' + k) : k;
 function briefCastHtml(b) {
   const items = b.libraryItems || [];

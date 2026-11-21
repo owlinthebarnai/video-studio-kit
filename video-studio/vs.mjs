@@ -1,19 +1,19 @@
 #!/usr/bin/env node
-// Video Studio: a tiny local server for the UI, plus the commands Claude uses to talk to it.
+// Video Studio: a tiny local server for the UI, plus the commands the agent CLI uses to talk to it.
 //   node vs.mjs serve [--port 4790]                 start the UI (http://localhost:4790)
 //   node vs.mjs new <slug> <project.json>           create/replace a project from a file
 //   node vs.mjs wait <slug> [--timeout 3600]        block until the user presses Build or sends a note; prints JSON
 //   node vs.mjs progress <slug> "text" [--scene N] [--clip path] [--status building|done|error]
 //   node vs.mjs done <slug> <final.mp4>             mark the project finished and show the video in the UI
-//   node vs.mjs reply <slug> "text"                 a message from Claude, shown in the UI chat
+//   node vs.mjs reply <slug> "text"                 a message from the agent, shown in the UI chat
 //   node vs.mjs show <slug>                          print the project JSON
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { writeScript, buildProject, stopBuild } from './agent.mjs';
-const MANUAL = process.env.VS_MANUAL === '1'; // 1 = an interactive Claude session builds (vs.mjs wait)
+import { writeScript, buildProject, stopBuild, suggestStyles } from './agent.mjs';
+const MANUAL = process.env.VS_MANUAL === '1'; // 1 = an interactive agent session builds (vs.mjs wait)
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const PROJECTS = path.join(ROOT, 'projects');
@@ -70,6 +70,11 @@ async function handle(req, res) {
     const list = fs.readdirSync(PROJECTS).filter((d) => fs.existsSync(pfile(d))).map((d) => { const x = load(d); return { slug: x.slug, title: x.title, status: x.status, updatedAt: x.updatedAt }; });
     return json(res, 200, list.sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || '')));
   }
+  if (p === '/api/suggest-style' && req.method === 'POST') {
+    const b = await body(req); const prompt = String(b.prompt || '').trim();
+    if (!prompt) return json(res, 400, { error: 'write a prompt' });
+    try { return json(res, 200, { suggestions: await suggestStyles(prompt, b.format || '9:16') }); } catch (e) { return json(res, 400, { error: e.message }); }
+  }
   if (p === '/api/script' && req.method === 'POST') {
     const b = await body(req); const prompt = String(b.prompt || '').trim();
     if (!prompt) return json(res, 400, { error: 'write a prompt' });
@@ -119,7 +124,7 @@ if (cmd === 'serve') {
 } else if (cmd === 'new') {
   const slug = process.argv[3]; if (!slugOk(slug)) { console.error('slug: lowercase letters, digits, hyphens'); process.exit(2); }
   const data = JSON.parse(fs.readFileSync(process.argv[4], 'utf8'));
-  const p = { ...blank(slug), ...data, slug, status: 'ready', log: [{ at: now(), text: 'Script and scenes written by Claude' }] };
+  const p = { ...blank(slug), ...data, slug, status: 'ready', log: [{ at: now(), text: 'Script and scenes written by the agent' }] };
   save(p); console.log(`project ${slug}: ${p.scenes.length} scenes → http://localhost:4790/?p=${slug}`);
 } else if (cmd === 'wait') {
   const slug = process.argv[3], timeout = +arg('--timeout', 3600) * 1000, t0 = Date.now();
@@ -128,7 +133,7 @@ if (cmd === 'serve') {
     if (p.status === 'build-requested' || unread.length) {
       unread.forEach((n) => (n.read = true));
       const event = p.status === 'build-requested' ? 'build' : 'note';
-      if (event === 'build') { p.status = 'building'; p.log.push({ at: now(), text: 'Claude picked up the build' }); }
+      if (event === 'build') { p.status = 'building'; p.log.push({ at: now(), text: 'The agent picked up the build' }); }
       save(p); console.log(JSON.stringify({ event, notes: unread.map((n) => n.text), project: p }, null, 1)); process.exit(0);
     }
     if (Date.now() - t0 > timeout) { console.log(JSON.stringify({ event: 'timeout' })); process.exit(0); }
@@ -145,7 +150,7 @@ if (cmd === 'serve') {
 } else if (cmd === 'done') {
   const slug = process.argv[3], p = load(slug); p.final = process.argv[4]; p.status = 'done'; p.savedPath = publishFinal(p); p.log.push({ at: now(), text: 'Finished: ' + (p.savedPath || p.final) }); save(p); console.log('ok');
 } else if (cmd === 'reply') {
-  const slug = process.argv[3], p = load(slug); p.notes.push({ from: 'claude', text: process.argv[4] || '', at: now(), read: true }); save(p); console.log('ok');
+  const slug = process.argv[3], p = load(slug); p.notes.push({ from: 'agent', text: process.argv[4] || '', at: now(), read: true }); save(p); console.log('ok');
 } else if (cmd === 'show') {
   console.log(JSON.stringify(load(process.argv[3]), null, 1));
 } else {

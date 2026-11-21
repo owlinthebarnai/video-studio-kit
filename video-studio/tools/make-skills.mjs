@@ -1,11 +1,12 @@
-// Build new style skills with Claude Code headless (your subscription), one after another (memory is tight).
+// Build new style skills with an agent CLI headless, one after another (memory is tight).
 // Each skill = .claude/skills/<id>/ with SKILL.md (style rules + how to build a scene), engine/ (reusable code),
 // examples/fire/ (a frame page) and a 5 s example clip in video-studio/examples/<id>--<example>.mp4.
 //   node tools/make-skills.mjs [ids...]
+// Which CLI: VS_AGENT env (claude|devin|gemini|codex), else the first installed — see ../agent-cli.mjs.
 import fs from 'node:fs';
 import path from 'node:path';
-import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { pick, modelFor, runAgent } from '../agent-cli.mjs';
 
 const VS = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const BUILD = path.resolve(VS, '..');
@@ -49,23 +50,21 @@ const TASKS = {
     ' Include a generic exploder: give it a list of parts (mesh, explode direction, distance, delay) and t, and it places them; plus a label/leader-line overlay that projects 3D anchors to 2D. Also gear/tooth and cylinder-with-bevel helpers so other products (headphones, cameras, sneakers) can reuse it.'),
 };
 
-function run(id) {
-  return new Promise((resolve) => {
-    const t0 = Date.now();
-    const child = spawn('claude', ['-p', '--model', 'opus', '--output-format', 'json', '--tools', 'Bash,Read,Write,Edit,Glob,Grep', '--allowedTools', 'Bash,Read,Write,Edit,Glob,Grep',
-      '--add-dir', BUILD, '--no-session-persistence', '--strict-mcp-config', '--mcp-config', empty, '--setting-sources', '', '--disable-slash-commands'],
-      { cwd: BUILD, windowsHide: true, env: { ...process.env, PYTHONUTF8: '1' } });
-    let out = '', err = '';
-    child.stdout.on('data', (d) => (out += d)); child.stderr.on('data', (d) => (err += d));
-    child.stdin.end(TASKS[id]());
-    child.on('close', () => {
-      const file = path.join(VS, 'examples', `${id}--fire.mp4`);
-      let r = {}; try { r = JSON.parse(out.trim()); } catch {}
-      const ok = fs.existsSync(file) && fs.statSync(file).mtimeMs > t0 && fs.existsSync(path.join(BUILD, '.claude/skills', id, 'SKILL.md'));
-      const line = `${id} ${ok ? 'OK' : 'FAIL'} ${((Date.now() - t0) / 60000).toFixed(1)} min, ${r.num_turns ?? '?'} turns | ${String(r.result ?? err).replace(/\s+/g, ' ').slice(0, 220)}`;
-      fs.appendFileSync(LOG, line + '\n'); console.log(line); resolve();
-    });
+const AGENT = pick();
+if (!AGENT) { console.error('No agent CLI found — install one of: claude, devin, gemini, codex'); process.exit(1); }
+const tail = (r) => (r.stderr || r.stdout || '').trim().split('\n').filter(Boolean).pop() || '';
+
+async function run(id) {
+  const t0 = Date.now();
+  const { done } = runAgent(AGENT, {
+    prompt: TASKS[id](), model: modelFor(AGENT.id, 'build'), cwd: BUILD, addDir: BUILD,
+    emptyMcp: empty, env: { ...process.env, PYTHONUTF8: '1' },
   });
+  const r = await done;
+  const file = path.join(VS, 'examples', `${id}--fire.mp4`);
+  const ok = fs.existsSync(file) && fs.statSync(file).mtimeMs > t0 && fs.existsSync(path.join(BUILD, '.claude/skills', id, 'SKILL.md'));
+  const line = `${id} ${ok ? 'OK' : 'FAIL'} ${((Date.now() - t0) / 60000).toFixed(1)} min, ${r.result?.num_turns ?? '?'} turns | ${String(r.result?.result ?? tail(r)).replace(/\s+/g, ' ').slice(0, 220)}`;
+  fs.appendFileSync(LOG, line + '\n'); console.log(line);
 }
 const ids = process.argv.slice(2).length ? process.argv.slice(2) : Object.keys(TASKS);
 for (const id of ids) await run(id);

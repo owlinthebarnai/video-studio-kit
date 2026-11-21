@@ -1,4 +1,4 @@
-// Video Studio UI: prompt (always open) → Claude writes the script → you edit/validate → Claude generates the video.
+// Video Studio UI: prompt (always open) → the agent writes the script → you edit/validate → the agent generates the video.
 const $ = (s) => document.querySelector(s);
 const api = async (url, opts = {}) => { const r = await fetch(url, { cache: 'no-store', headers: { 'Content-Type': 'application/json' }, ...opts }); return r.json(); };
 let CAT = null, P = null, slug = new URLSearchParams(location.search).get('p'), dirty = false, saveTimer = null, selected = null;
@@ -62,9 +62,8 @@ $('#useInScene').onclick = (e) => {
 };
 
 // ---------- prompt → script ----------
-$('#promptForm').onsubmit = async (e) => {
-  e.preventDefault();
-  const prompt = $('#prompt').value.trim(); if (!prompt) { $('#prompt').focus(); return; }
+async function writeScriptNow(prompt) {
+  $('#suggestPanel').hidden = true;
   $('#writeScript').disabled = true;
   const r = await api('/api/script', { method: 'POST', body: JSON.stringify({ prompt, format: $('#newFormat').value, style: selected ? `${selected.tool}/${selected.style}` : null }) });
   $('#writeScript').disabled = false;
@@ -73,6 +72,31 @@ $('#promptForm').onsubmit = async (e) => {
   history.replaceState(null, '', '?p=' + r.slug); slug = r.slug;
   P = await api('/api/project/' + slug); await loadProjects(); renderProject();
   $('#project').scrollIntoView({ behavior: 'smooth' });
+}
+function renderSuggestions(list, prompt) {
+  const grid = $('#suggestGrid'); grid.innerHTML = '';
+  for (const s of list) {
+    const el = document.createElement('div'); el.className = 'sug';
+    el.innerHTML = `${s.example ? `<video src="/${s.example}" muted loop playsinline></video>` : `<div class="sug-novid">no preview yet</div>`}
+      <div class="sug-body"><b>${esc(s.name)}</b><p>${esc(s.why)}</p>
+      <button class="primary small">Use this style</button></div>`;
+    const v = el.querySelector('video'); if (v) { el.onmouseenter = () => v.play().catch(() => {}); el.onmouseleave = () => v.pause(); }
+    el.querySelector('button').onclick = () => { select(s.tool, s.style); $('#suggestPanel').hidden = true; writeScriptNow(prompt); };
+    grid.appendChild(el);
+  }
+  $('#suggestPanel').hidden = false;
+  $('#suggestPanel').scrollIntoView({ behavior: 'smooth' });
+}
+$('#suggestDismiss').onclick = () => { $('#suggestPanel').hidden = true; };
+$('#promptForm').onsubmit = async (e) => {
+  e.preventDefault();
+  const prompt = $('#prompt').value.trim(); if (!prompt) { $('#prompt').focus(); return; }
+  if (!$('#suggestStyle').checked) return writeScriptNow(prompt);
+  $('#writeScript').disabled = true; $('#writeScript').textContent = 'Asking the agent…';
+  const r = await api('/api/suggest-style', { method: 'POST', body: JSON.stringify({ prompt, format: $('#newFormat').value }) });
+  $('#writeScript').disabled = false; $('#writeScript').textContent = 'Write the script';
+  if (r.error) return alert(r.error);
+  renderSuggestions(r.suggestions || [], prompt);
 };
 $('#prompt').addEventListener('keydown', (e) => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) $('#promptForm').requestSubmit(); });
 
@@ -138,14 +162,14 @@ $('#projectStyle').onchange = () => {
 function renderProject() {
   $('#empty').hidden = !!P; $('#proj').hidden = !P;
   if (!P) return;
-  $('#title').value = P.title || ''; $('#format').value = P.format || '9:16'; $('#voice').value = P.voice?.on === true ? P.voice.voice : 'none'; $('#music').value = P.music && P.music !== 'auto' ? P.music : 'lofi';
+  $('#title').value = P.title || ''; $('#format').value = P.format || '9:16'; $('#voice').value = P.voice?.on === true ? (P.voice.engine === 'edge' ? 'edge:' : '') + P.voice.voice : 'none'; $('#music').value = P.music && P.music !== 'auto' ? P.music : 'lofi';
   $('#ideaLine').textContent = (P.styleName ? 'Style: ' + P.styleName + ' · ' : '') + (P.idea ? 'Prompt: ' + P.idea : '');
   const ps = $('#projectStyle'), cur = P.style || P.scenes.find((s) => s.tool)?.tool || '';
   ps.innerHTML = toolOptions(cur).replace('— pick —', 'Style: pick one'); ps.value = cur;
   ps.disabled = ['building', 'writing-script'].includes(P.status);
   renderScenes(); renderLive();
 }
-const STATUS = { 'writing-script': 'writing script…', 'script-ready': 'script ready: edit & validate', ready: 'script ready: edit & validate', draft: 'draft', 'build-requested': 'waiting for Claude', building: 'generating video…', done: 'done', error: 'error' };
+const STATUS = { 'writing-script': 'writing script…', 'script-ready': 'script ready: edit & validate', ready: 'script ready: edit & validate', draft: 'draft', 'build-requested': 'waiting for the agent', building: 'generating video…', done: 'done', error: 'error' };
 function renderLive() {
   const st = $('#status'); st.textContent = STATUS[P.status] || P.status; st.className = 'status ' + P.status;
   const writing = P.status === 'writing-script';
@@ -189,18 +213,24 @@ async function save() {
 }
 $('#title').oninput = () => { P.title = $('#title').value; touch(); };
 $('#format').onchange = () => { P.format = $('#format').value; touch(); };
-$('#voice').onchange = () => { const v = $('#voice').value; P.voice = v === 'none' ? { engine: 'kokoro', voice: 'none', on: false } : { engine: 'kokoro', voice: v, on: true }; touch(); };
+$('#voice').onchange = () => {
+  const v = $('#voice').value;
+  if (v === 'none') P.voice = { engine: 'kokoro', voice: 'none', on: false };
+  else if (v.startsWith('edge:')) P.voice = { engine: 'edge', voice: v.slice(5), on: true };
+  else P.voice = { engine: 'kokoro', voice: v, on: true };
+  touch();
+};
 $('#music').onchange = () => { P.music = $('#music').value; touch(); };
 $('#addScene').onclick = () => { if (!P) return; const last = P.scenes[P.scenes.length - 1]; const s0 = last ? +last.end : 0; P.scenes.push({ n: P.scenes.length + 1, start: s0, end: +(s0 + 3).toFixed(1), tool: last ? last.tool : '', visual: '', narration: '', onscreen: '', sound: '', notes: '' }); renderScenes(); touch(); };
 $('#build').onclick = async () => {
-  if (!confirm('Generate the video from this script? Claude Code will render every scene (this can take a while).')) return;
+  if (!confirm('Generate the video from this script? The agent will render every scene (this can take a while).')) return;
   if (dirty) await save();
   try { if (window.Notification && Notification.permission === 'default') Notification.requestPermission(); } catch {}
   P = await api(`/api/project/${P.slug}/build`, { method: 'POST', body: '{}' }); renderScenes(); renderLive();
 };
 $('#stop').onclick = async () => { P = await api(`/api/project/${P.slug}/stop`, { method: 'POST', body: '{}' }); renderScenes(); renderLive(); };
 
-// live updates while Claude writes or builds (never overwrite what you're typing)
+// live updates while the agent writes or builds (never overwrite what you're typing)
 let lastStatus = null;
 setInterval(async () => {
   if (!P || dirty) return;

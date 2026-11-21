@@ -1,13 +1,14 @@
 #!/usr/bin/env node
 // tvhead studio app — local web UI for briefs, storyboards and renders.  node app/server.mjs  →  http://localhost:4777
-// Claude sees the app through files (.app.json, episodes/<id>/job.json) and the bridge: `node app/bridge.mjs status|wait|…`.
+// The agent sees the app through files (.app.json, episodes/<id>/job.json) and the bridge: `node app/bridge.mjs status|wait|…`.
 // Listens on 127.0.0.1 only. No dependencies beyond Node.
 import '../lib/net.mjs';
 import http from 'node:http';
 import { spawn, spawnSync } from 'node:child_process';
 import { createReadStream, existsSync, statSync, readFileSync, writeFileSync, mkdirSync, rmSync, unlinkSync, copyFileSync, createWriteStream } from 'node:fs';
 import path from 'node:path';
-import { STUDIO, EPISODES, APP_STATE, getJob, saveJob, setStatus, listJobs, createJob, claudeWatching, jobDir, readJson, writeJson } from './jobs.mjs';
+import { STUDIO, EPISODES, APP_STATE, getJob, saveJob, setStatus, listJobs, createJob, agentWatching, jobDir, readJson, writeJson } from './jobs.mjs';
+import { pick, modelFor, runAgent } from './agent-cli.mjs';
 import { THEMES, LOOKS, localize, storyLanguages, resolveFormat } from '../lib/story.mjs';
 import { MUSIC_PRESETS } from '../lib/music.mjs';
 import { DEFAULT_VOICES, provider } from '../lib/voice.mjs';
@@ -20,8 +21,8 @@ const envFile = path.join(STUDIO, '.env');
 if (existsSync(envFile)) for (const line of readFileSync(envFile, 'utf8').split(/\r?\n/)) {
   const m = line.match(/^\s*([A-Z0-9_]+)\s*=\s*(.*?)\s*$/); if (m && !process.env[m[1]]) process.env[m[1]] = m[2].replace(/^(['"])(.*)\1$/, '$2');
 }
-const HAS_CLAUDE_CLI = !spawnSync(process.platform === 'win32' ? 'where' : 'which', ['claude']).status;
-const running = new Map();   // id → child process (render / claude)
+const AGENT_CLI = pick();   // agent CLI for autonomous storyboarding (VS_AGENT env, else first installed), see agent-cli.mjs
+const running = new Map();   // id → child process (render / agent CLI)
 
 const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.mjs': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.json': 'application/json', '.md': 'text/plain; charset=utf-8',
   '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp', '.gif': 'image/gif', '.svg': 'image/svg+xml', '.mp4': 'video/mp4', '.srt': 'text/plain; charset=utf-8', '.woff2': 'font/woff2', '.mp3': 'audio/mpeg', '.log': 'text/plain; charset=utf-8' };
@@ -67,7 +68,7 @@ function storyboard(id, ui) {   // ui: interface language for notes / names (fal
       const checks = (readFileSync(p, 'utf8').match(/^- ⚠ .*$/gm) || []).map(l => l.slice(4)), v = statSync(p).mtimeMs | 0;
       return { proposal: `/files/episodes/${id}/build/proposal.md?v=${v}`, prompts: `/files/episodes/${id}/build/${first}/prompts.md?v=${v}`, checks: checks.length, checkText: checks.join(' · ') };
     })(),
-    cast: (() => {   // model sheet written by "make.mjs <id> --cast" (characters + environments Claude designed)
+    cast: (() => {   // model sheet written by "make.mjs <id> --cast" (characters + environments the agent designed)
       const cj = readJson(path.join(jobDir(id), 'build', 'cast', 'cast.json'));
       const chars = Object.entries(story.characters || {}).filter(([k]) => k !== '*').map(([k, c]) => ({ id: k, name: localize(c.name, ui || first) || k, desc: localize(c.desc, ui || first) || '' }));
       if (!cj && !chars.length) return null;
@@ -122,20 +123,18 @@ function restill(id, next = 'storyboard') {
   } });
 }
 
-// ─── autonomous mode: the app asks Claude Code (headless) to write the storyboard ───────────────
-function startClaudeCli(id, feedback) {
-  if (!HAS_CLAUDE_CLI || running.has(id)) return false;
+// ─── autonomous mode: the app asks an agent CLI (headless) to write the storyboard ──────────────
+function startAgentCli(id, feedback) {
+  if (!AGENT_CLI || running.has(id)) return false;
   const prompt = `Use the tvhead-video skill. You are processing a job from the tvhead studio app in ${STUDIO}.
 Job id: ${id}. ${feedback ? `The user sent storyboard feedback: "${feedback}". Revise episodes/${id}/story.json accordingly.` : `Read episodes/${id}/brief.json (and any images in episodes/${id}/refs/) and write episodes/${id}/story.json.`}
 Follow SKILL.md section "App jobs": claim with \`node app/bridge.mjs claim ${id}\`, design the cast and world (story "characters" + scene "set", see references/cast-and-world.md; use the brief's castIdeas / worldIdeas / libraryItems images, invent the rest by meaning), write the story (every scene gets a "note"; say as {"en","ru"} for each language in the brief; copy the brief's "format", "look" and "arc" (unless "auto") into story.json, and "music" unless it is "auto" ("none" → "music": false)), then run \`node app/bridge.mjs storyboard ${id}\` and look at the sheet it prints; fix obvious problems once. Do not render the final video — the app does that after the user approves.`;
-  const log = createWriteStream(path.join(jobDir(id), 'claude.log'), { flags: 'a' });
-  const p = spawn('claude', ['-p', '--permission-mode', 'acceptEdits', '--allowedTools', 'Read', 'Write', 'Edit', 'Glob', 'Grep', 'Bash(node:*)'],
-    { cwd: STUDIO, shell: process.platform === 'win32', env: { ...process.env } });
+  const log = createWriteStream(path.join(jobDir(id), 'agent.log'), { flags: 'a' });
+  const { child: p, done } = runAgent(AGENT_CLI, { prompt, model: modelFor(AGENT_CLI.id, 'build'), cwd: STUDIO, promptDir: jobDir(id) });
   running.set(id, p);
-  p.stdin.end(prompt);
   p.stdout.pipe(log); p.stderr.pipe(log);
-  setStatus(id, 'storyboarding', 'Claude CLI пишет раскадровку');
-  p.on('exit', code => { running.delete(id); const j = getJob(id); if (j && j.status === 'storyboarding') setStatus(id, 'error', 'Claude CLI завершился без раскадровки', { error: `exit ${code}, see claude.log` }); });
+  setStatus(id, 'storyboarding', 'Агент пишет раскадровку');
+  done.then(({ code }) => { running.delete(id); const j = getJob(id); if (j && j.status === 'storyboarding') setStatus(id, 'error', 'Агент завершился без раскадровки', { error: `exit ${code}, see agent.log` }); });
   return true;
 }
 
@@ -175,7 +174,7 @@ const server = http.createServer(async (req, res) => {
     if (M === 'GET' && p.startsWith('/files/')) return serveFile(req, res, p.slice(7));
     if (M === 'GET' && p === '/api/status') {
       const jobs = listJobs();
-      return send(res, 200, { ok: true, version: VERSION, studio: STUDIO, tts: provider() || null, claude: { watching: claudeWatching(), cli: HAS_CLAUDE_CLI },
+      return send(res, 200, { ok: true, version: VERSION, studio: STUDIO, tts: provider() || null, agent: { watching: agentWatching(), cli: !!AGENT_CLI, name: AGENT_CLI?.label || null },
         defaults: { voices: DEFAULT_VOICES }, counts: Object.fromEntries(['brief', 'storyboarding', 'storyboard', 'revise', 'rendering', 'done', 'error'].map(s => [s, jobs.filter(j => j.status === s).length])) });
     }
     if (M === 'GET' && p === '/api/looks') return send(res, 200, { looks: Object.entries(LOOKS).map(([id, l]) => ({ id, label: l.label, theme: l.theme, music: l.music })), music: Object.keys(MUSIC_PRESETS) });
@@ -204,7 +203,7 @@ const server = http.createServer(async (req, res) => {
         const items = attachToJob(job.id, b.library.slice(0, 12)), file = path.join(jobDir(job.id), 'brief.json'), br = readJson(file);
         br.libraryItems = items; writeJson(file, br); const j = getJob(job.id); j.brief = br; saveJob(j);
       }
-      if (brief.engine === 'cli') startClaudeCli(job.id);
+      if (brief.engine === 'cli') startAgentCli(job.id);
       return send(res, 200, getJob(job.id));
     }
     if (m) {
@@ -216,8 +215,8 @@ const server = http.createServer(async (req, res) => {
         const b = await body(req), text = String(b.text || '').trim();
         if (!text) return send(res, 400, { error: 'The notes are empty', code: 'empty_feedback' });
         job.feedback = [...(job.feedback || []), { t: new Date().toISOString(), text }]; saveJob(job);
-        setStatus(id, 'revise', 'Правки отправлены Claude');
-        if (job.brief?.engine === 'cli') startClaudeCli(id, text);
+        setStatus(id, 'revise', 'Правки отправлены агенту');
+        if (job.brief?.engine === 'cli') startAgentCli(id, text);
         return send(res, 200, getJob(id));
       }
       if (M === 'POST' && action === 'narration') {   // inline narration edits from the storyboard: { scenes: [{ i, say: { en, ru } }] }
@@ -238,7 +237,7 @@ server.on('error', e => { console.error(e.code === 'EADDRINUSE' ? `port ${PORT} 
 server.listen(PORT, '127.0.0.1', () => {
   const url = `http://localhost:${PORT}`;
   writeJson(APP_STATE, { pid: process.pid, port: PORT, url, startedAt: new Date().toISOString(), version: VERSION });
-  console.log(`tvhead studio → ${url}\n  TTS: ${provider() || 'no key (narration will be silent)'} · Claude CLI: ${HAS_CLAUDE_CLI ? 'yes' : 'no'}\n  Claude session: run "node app/bridge.mjs wait" (the skill does this) — the header shows when Claude is listening.`);
+  console.log(`tvhead studio → ${url}\n  TTS: ${provider() || 'no key (narration will be silent)'} · Agent CLI: ${AGENT_CLI ? AGENT_CLI.label : 'none'}\n  Agent session: run "node app/bridge.mjs wait" (the skill does this) — the header shows when the agent is listening.`);
   if (process.argv.includes('--open')) spawn(process.platform === 'win32' ? 'cmd' : process.platform === 'darwin' ? 'open' : 'xdg-open', process.platform === 'win32' ? ['/c', 'start', '', url] : [url], { stdio: 'ignore', detached: true }).unref();
   ensureThumbs().catch(e => console.warn('thumbs:', e.message));
 });
